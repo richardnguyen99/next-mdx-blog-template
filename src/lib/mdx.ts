@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 import matter from "gray-matter";
+
 import { BlogData, Frontmatter } from "@/types/mdx";
+import readingTime from "reading-time";
 
 function checkMdxFrontmatter(data: object): data is Frontmatter {
   if (typeof data !== "object") {
@@ -37,6 +39,8 @@ export async function getMdxFromSlug(
   return {
     frontmatter: data,
     rawContent: content,
-    excerpt: data.description,
+    fields: {
+      timeToRead: readingTime(content),
+    },
   };
 }
