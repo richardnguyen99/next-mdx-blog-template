@@ -28,6 +28,11 @@ export type BlogFields = {
 
 export type BlogData = {
   /**
+   * Unique ID of the MDX file. This is the file name without the extension.
+   */
+  id: string;
+
+  /**
    * Frontmatter of the MDX file. Available at pre-build (writing) time.
    */
   frontmatter: Frontmatter;

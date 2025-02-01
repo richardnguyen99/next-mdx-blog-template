@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import { createHmac } from "node:crypto";
 import matter from "gray-matter";
 
 import { BlogData, Frontmatter } from "@/types/mdx";
@@ -37,10 +38,26 @@ export async function getMdxFromSlug(
   }
 
   return {
+    id: createHmac("sha256", slug).digest("hex"),
     frontmatter: data,
     rawContent: content,
     fields: {
       timeToRead: readingTime(content),
     },
   };
+}
+
+export async function getAllMdx(): Promise<BlogData[]> {
+  const files = await fs.readdir("src/posts");
+
+  const mdxFiles = files.filter((file) => file.endsWith(".mdx"));
+
+  const posts = await Promise.all(
+    mdxFiles.map(async (file) => {
+      const slug = file.replace(".mdx", "");
+      return getMdxFromSlug(slug);
+    })
+  );
+
+  return posts;
 }
