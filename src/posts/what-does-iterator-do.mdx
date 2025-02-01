@@ -1,0 +1,134 @@
+---
+title: "What Does Iterator Do?"
+slug: "what-does-iterator-do"
+date: "2024-01-24"
+author: "James McGill"
+description: "Understanding the Iterator pattern in software design."
+tags: ["design patterns", "iterator pattern", "software design"]
+category: "design patterns"
+thumbnail: "/thumbnails/iterator-pattern.png"
+published: true 
+publishedAt: "2024-02-25"
+---
+
+# What Does Iterator Do?
+
+The Iterator pattern is a design pattern that provides a way to access the elements of an aggregate object (like a collection) sequentially without exposing its underlying representation. This pattern is useful when you want to traverse a collection without needing to know its internal structure.
+
+## When to Use the Iterator Pattern
+
+- When you need to traverse a collection without exposing its internal structure.
+- When you want to provide a uniform way to traverse different types of collections.
+- When you want to support multiple traversal algorithms for a collection.
+- When you want to allow concurrent traversal of a collection.
+- When you want to encapsulate the traversal logic of a collection.
+
+## When Not to Use the Iterator Pattern
+
+- When the collection is simple and does not require complex traversal logic.
+- When the collection is small and performance is not a concern.
+- When the collection is not expected to change frequently.
+- When the collection is not expected to be traversed multiple times.
+
+## Common iterator implementations
+
+- **Java**: The `Iterator` interface in Java provides methods for traversing collections.
+
+```java
+import java.util.Iterator;
+import java.util.List;
+
+public class IteratorExample {
+    public static void main(String[] args) {
+        List<String> list = List.of("A", "B", "C");
+        Iterator<String> iterator = list.iterator();
+        while (iterator.hasNext()) {
+            System.out.println(iterator.next());
+        }
+    }
+}
+```
+
+- **C#**: The `IEnumerator` interface in C# provides methods for traversing collections.
+
+```csharp
+using System;
+using System.Collections.Generic;
+
+class Program
+    static void Main()
+    {
+        List<string> list = new List<string> { "A", "B", "C" };
+        IEnumerator<string> enumerator = list.GetEnumerator();
+        while (enumerator.MoveNext())
+        {
+            Console.WriteLine(enumerator.Current);
+        }
+    }
+}
+```
+
+- **Python**: The `iter()` function and the `__iter__()` method in Python provide methods for traversing collections.
+
+```python
+# Using iter() function
+my_list = ["A", "B", "C"]
+
+for item in iter(my_list):
+    print(item)
+```
+
+# Implement your own iterator
+
+You can implement your own iterator in Java by creating a class that implements the `Iterator` interface. Here's an example of a custom iterator for a simple collection:
+
+```python
+
+class BinaryTree:
+    def __init__(self, value):
+        self.value = value
+        self.left = None
+        self.right = None
+
+class BinaryTreeIterator:
+    def __init__(self, root):
+        self.stack = []
+        self._push_left(root)
+
+    def _push_left(self, node):
+        while node:
+            self.stack.append(node)
+            node = node.left
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        if not self.stack:
+            raise StopIteration
+        node = self.stack.pop()
+        self._push_left(node.right)
+        return node.value
+```
+
+# Example usage
+
+```python
+# Create a binary tree
+root = BinaryTree(1)
+
+root.left = BinaryTree(2)
+root.right = BinaryTree(3)
+root.left.left = BinaryTree(4)
+
+# Create an iterator for the binary tree
+iterator = BinaryTreeIterator(root)
+
+# Iterate through the binary tree
+for value in iterator:
+    print(value)
+```
+
+# Conclusion
+
+The Iterator pattern is a powerful design pattern that provides a way to traverse collections without exposing their internal structure. It is widely used in various programming languages and can be implemented in different ways. By using the Iterator pattern, you can create more flexible and maintainable code that can handle complex traversal logic and support multiple traversal algorithms.

@@ -1,0 +1,142 @@
+---
+title: "But What is Builder Pattern?"
+slug: "but-what-is-builder-pattern"
+date: "2024-03-01"
+author: "Joe Bastian"
+description: "Understanding the Builder Pattern in software design."
+tags: ["design patterns", "builder pattern", "software design"]
+category: "design patterns"
+thumbnail: "/thumbnails/builder-pattern.png"
+published: true 
+publishedAt: "2024-03-05"
+---
+
+# Builder Pattern
+
+The Builder Pattern is a design pattern that provides a flexible solution for constructing complex objects. It separates the construction of a complex object from its representation, allowing the same construction process to create different representations. This pattern is particularly useful when an object needs to be created with many optional parameters or when the construction process involves multiple steps.
+
+## When to Use the Builder Pattern
+
+- When an object needs to be created with many optional parameters.
+- When the construction process involves multiple steps.
+- When you want to create different representations of the same type of object.
+- When you want to encapsulate the construction logic of an object.
+
+## When Not to Use the Builder Pattern
+
+- When the object to be created is simple and does not require multiple steps or optional parameters.
+- When the object creation logic is straightforward and does not need to be encapsulated.
+- When the object creation process is not complex enough to justify the use of a builder.
+
+# Examples of Builder Pattern
+
+## Example 1: Building a Complex Object
+
+```java
+public class Computer {
+    private String CPU;
+    private String GPU;
+    private int RAM;
+    private int storage;
+
+    public static class Builder {
+        private String CPU;
+        private String GPU;
+        private int RAM;
+        private int storage;
+
+        public Builder setCPU(String CPU) {
+            this.CPU = CPU;
+            return this;
+        }
+
+        public Builder setGPU(String GPU) {
+            this.GPU = GPU;
+            return this;
+        }
+
+        public Builder setRAM(int RAM) {
+            this.RAM = RAM;
+            return this;
+        }
+
+        public Builder setStorage(int storage) {
+            this.storage = storage;
+            return this;
+        }
+
+        public Computer build() {
+            Computer computer = new Computer();
+            computer.CPU = this.CPU;
+            computer.GPU = this.GPU;
+            computer.RAM = this.RAM;
+            computer.storage = this.storage;
+            return computer;
+        }
+    }
+}
+```
+
+## Example 2: Building a Query Builder
+
+```java
+public class Query {
+    private String table;
+    private String whereClause;
+    private String orderBy;
+
+    public static class Builder {
+        private String table;
+        private String whereClause;
+        private String orderBy;
+
+        public Builder setTable(String table) {
+            this.table = table;
+            return this;
+        }
+
+        public Builder setWhereClause(String whereClause) {
+            this.whereClause = whereClause;
+            return this;
+        }
+
+        public Builder setOrderBy(String orderBy) {
+            this.orderBy = orderBy;
+            return this;
+        }
+
+        public Query build() {
+            Query query = new Query();
+            query.table = this.table;
+            query.whereClause = this.whereClause;
+            query.orderBy = this.orderBy;
+            return query;
+        }
+    }
+}
+```
+
+## Usage
+
+```java
+public class Main {
+    public static void main(String[] args) {
+        Computer computer = new Computer.Builder()
+                .setCPU("Intel i7")
+                .setGPU("NVIDIA RTX 3080")
+                .setRAM(16)
+                .setStorage(512)
+                .build();
+
+        Query query = new Query.Builder()
+                .setTable("users")
+                .setWhereClause("age > 18")
+                .setOrderBy("name ASC")
+                .build();
+    }
+}
+```
+
+# Conclusion
+
+The Builder Pattern is a powerful design pattern that helps in constructing complex objects step by step. It provides a clear and flexible way to create objects with multiple optional parameters and complex construction logic. By encapsulating the construction process, the Builder Pattern promotes code readability and maintainability.

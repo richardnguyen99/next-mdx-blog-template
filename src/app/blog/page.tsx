@@ -30,7 +30,7 @@ export default async function Blog(props: Props) {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {posts.map((post) => {
+          {posts.slice(0,6).map((post) => {
             const { frontmatter, fields, id } = post;
 
             return (
