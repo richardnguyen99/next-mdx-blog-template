@@ -2,7 +2,7 @@ import React from "react";
 
 import { FilterDropdown } from "@/features/blog/filter-dropdown";
 import { SortDropdown } from "@/features/blog/sort-dropdown";
-import { getAllMdx } from "@/lib/mdx";
+import { getAllCategories, getAllMdx } from "@/lib/mdx";
 import ArticleCard from "@/components/article-card";
 
 type Props = {
@@ -20,10 +20,22 @@ const filterPost = (category?: string) => {
 };
 
 export default async function Blog({ searchParams }: Props) {
-  const { f } = await searchParams;
+  const { f = "all" } = await searchParams;
   const mdxData = await getAllMdx();
+  const categories = await getAllCategories();
 
   const posts = mdxData.filter(filterPost(f));
+  const categoryItems = categories.map(({ id, name, count }) => ({
+    id: id,
+    value: name,
+    label: `${name} (${count})`,
+  }));
+
+  categoryItems.unshift({
+    id: "all",
+    value: "all",
+    label: `All (${mdxData.length})`,
+  });
 
   return (
     <div className="min-h-screen max-w-3xl mx-auto pr-4 pl-8 mt-8">
@@ -35,7 +47,7 @@ export default async function Blog({ searchParams }: Props) {
             <h3>All posts</h3>
 
             <div className="flex items-center gap-2">
-              <FilterDropdown />
+              <FilterDropdown currentFilter={f} items={categoryItems} />
               <SortDropdown />
             </div>
           </div>

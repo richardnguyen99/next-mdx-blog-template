@@ -49,3 +49,20 @@ export type BlogData = {
    */
   fields: BlogFields;
 };
+
+export type BlogCategory = {
+  /**
+   * Unique ID of the category.
+   */
+  id: string;
+
+  /**
+   * Name of the category.
+   */
+  name: string;
+
+  /**
+   * Number of posts in the category.
+   */
+  count: number;
+}

@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import { createHmac } from "node:crypto";
 import matter from "gray-matter";
 
-import { BlogData, Frontmatter } from "@/types/mdx";
+import { BlogData, Frontmatter, BlogCategory } from "@/types/mdx";
 import readingTime from "reading-time";
 
 function checkMdxFrontmatter(data: object): data is Frontmatter {
@@ -60,4 +60,32 @@ export async function getAllMdx(): Promise<BlogData[]> {
   );
 
   return posts;
+}
+
+export async function getAllCategories(): Promise<BlogCategory[]> {
+  const posts = await getAllMdx();
+
+  const categories = posts.reduce((acc, post) => {
+    const { category } = post.frontmatter;
+
+    if (!category) {
+      return acc;
+    }
+
+    const existingCategory = acc.get(category);
+
+    if (existingCategory) {
+      existingCategory.count += 1;
+    } else {
+      acc.set(category, {
+        id: category,
+        name: category,
+        count: 1,
+      });
+    }
+
+    return acc;
+  }, new Map<string, BlogCategory>());
+
+  return Array.from(categories.values());
 }
