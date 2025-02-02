@@ -1,17 +1,29 @@
 import React from "react";
 
-import { FilterDropdown } from "./filter-dropdown";
-import { SortDropdown } from "./sort-dropdown";
+import { FilterDropdown } from "@/features/blog/filter-dropdown";
+import { SortDropdown } from "@/features/blog/sort-dropdown";
 import { getAllMdx } from "@/lib/mdx";
 import ArticleCard from "@/components/article-card";
 
 type Props = {
-  params: { tag: string };
+  searchParams: Promise<{ [k: string]: string | undefined }>;
 };
 
-export default async function Blog(props: Props) {
-  const {} = props;
-  const posts = await getAllMdx();
+const filterPost = (category?: string) => {
+  return (post: Awaited<ReturnType<typeof getAllMdx>>[number]) => {
+    if (!category || category === "all") {
+      return true;
+    }
+
+    return post.frontmatter?.category === category;
+  };
+};
+
+export default async function Blog({ searchParams }: Props) {
+  const { f } = await searchParams;
+  const mdxData = await getAllMdx();
+
+  const posts = mdxData.filter(filterPost(f));
 
   return (
     <div className="min-h-screen max-w-3xl mx-auto pr-4 pl-8 mt-8">
