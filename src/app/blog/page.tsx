@@ -55,8 +55,13 @@ export default async function Blog({ searchParams }: Props) {
   const paginatedPosts = posts.slice(start, end);
 
   const currentQueryString = new URLSearchParams();
+
   if (filter && filter !== "all") {
     currentQueryString.set("filter", filter);
+  }
+
+  if (pageN > 1) {
+    currentQueryString.set("page", pageN.toString());
   }
 
   return (
@@ -66,7 +71,10 @@ export default async function Blog({ searchParams }: Props) {
           <h1 className="text-4xl font-bold">Blog</h1>
 
           <div className="flex items-center justify-between mt-8 pb-4 mb-4 border-b">
-            <h3>All posts</h3>
+            <h3>
+              All posts{" "}
+              <span className="text-muted">({posts.length} total)</span>
+            </h3>
 
             <div className="flex items-center gap-2">
               <FilterDropdown currentFilter={filter} items={categoryItems} />
@@ -93,7 +101,7 @@ export default async function Blog({ searchParams }: Props) {
         <Pagination
           className="mt-8"
           currentPage={pageN}
-          currentQueryString={currentQueryString.toString()}
+          currentQueryString={currentQueryString}
           totalPages={totalPages}
           rootUrl="/blog"
         />

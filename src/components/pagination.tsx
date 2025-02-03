@@ -15,7 +15,7 @@ type Props = {
   totalPages: number;
   rootUrl: string;
   queryName?: string;
-  currentQueryString?: string;
+  currentQueryString?: URLSearchParams;
 };
 
 export function Pagination({
@@ -27,9 +27,15 @@ export function Pagination({
   queryName = "page",
   ...rest
 }: React.ComponentProps<"nav"> & Props) {
-  const pageUrl = (pageNumber: number) => { 
+  const pageUrl = (pageNumber: number) => {
     if (currentQueryString) {
-      return `${rootUrl}?${currentQueryString}&${queryName}=${pageNumber}`;
+      if (currentQueryString.has(queryName)) {
+        currentQueryString.delete(queryName);
+      }
+
+      currentQueryString.set(queryName, pageNumber.toString());
+      
+      return `${rootUrl}?${currentQueryString}`;
     }
 
     return `${rootUrl}?${queryName}=${pageNumber}`;
@@ -42,17 +48,12 @@ export function Pagination({
           {currentPage === 1 ? (
             <PaginationPrevious href={pageUrl(currentPage)} aria-disabled />
           ) : (
-            <PaginationPrevious
-              href={pageUrl(currentPage - 1)}
-            />
+            <PaginationPrevious href={pageUrl(currentPage - 1)} />
           )}
         </PaginationItem>
 
         <PaginationItem>
-          <PaginationLink
-            href={pageUrl(1)}
-            isActive={currentPage === 1}
-          >
+          <PaginationLink href={pageUrl(1)} isActive={currentPage === 1}>
             1
           </PaginationLink>
         </PaginationItem>
@@ -62,10 +63,7 @@ export function Pagination({
         {Array.from({ length: 3 }, (_, i) => i + currentPage - 1).map((i) =>
           i > 1 && i < totalPages ? (
             <PaginationItem key={i}>
-              <PaginationLink
-                href={pageUrl(i)}
-                isActive={currentPage === i}
-              >
+              <PaginationLink href={pageUrl(i)} isActive={currentPage === i}>
                 {i}
               </PaginationLink>
             </PaginationItem>
@@ -98,4 +96,3 @@ export function Pagination({
 }
 
 export default Pagination;
-
