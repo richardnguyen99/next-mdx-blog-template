@@ -7,8 +7,14 @@ import ArticleCard from "@/components/article-card";
 import Pagination from "@/components/pagination";
 
 type Props = {
-  searchParams: Promise<{ [k: string]: string | undefined }>;
+  searchParams: Promise<{
+    filter?: string;
+    sort?: string;
+    page?: string;
+  }>;
 };
+
+const POST_PER_PAGE = 6;
 
 const filterPost = (category?: string) => {
   return (post: Awaited<ReturnType<typeof getAllMdx>>[number]) => {
@@ -21,11 +27,11 @@ const filterPost = (category?: string) => {
 };
 
 export default async function Blog({ searchParams }: Props) {
-  const { f = "all" } = await searchParams;
+  const { filter = "all", page = "1" } = await searchParams;
   const mdxData = await getAllMdx();
   const categories = await getAllCategories();
 
-  const posts = mdxData.filter(filterPost(f));
+  const posts = mdxData.filter(filterPost(filter));
   const categoryItems = categories.map(({ id, name, count }) => ({
     id: id,
     value: name,
@@ -38,6 +44,16 @@ export default async function Blog({ searchParams }: Props) {
     label: `All (${mdxData.length})`,
   });
 
+  const parsedPage = parseInt(page, 10);
+  const pageNumber = Number.isNaN(parsedPage) ? 1 : parsedPage;
+  const totalPages = Math.ceil(posts.length / POST_PER_PAGE);
+
+  const pageN =
+    pageNumber < 1 ? 1 : pageNumber > totalPages ? totalPages : pageNumber;
+  const start = (pageN - 1) * POST_PER_PAGE;
+  const end = start + POST_PER_PAGE;
+  const paginatedPosts = posts.slice(start, end);
+
   return (
     <div className="min-h-screen max-w-3xl mx-auto px-8 mt-8">
       <main className="flex flex-col row-start-2 items-center sm:items-start">
@@ -48,14 +64,14 @@ export default async function Blog({ searchParams }: Props) {
             <h3>All posts</h3>
 
             <div className="flex items-center gap-2">
-              <FilterDropdown currentFilter={f} items={categoryItems} />
+              <FilterDropdown currentFilter={filter} items={categoryItems} />
               <SortDropdown />
             </div>
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {posts.slice(0,6).map((post) => {
+          {paginatedPosts.map((post) => {
             const { frontmatter, fields, id } = post;
 
             return (
@@ -71,8 +87,8 @@ export default async function Blog({ searchParams }: Props) {
 
         <Pagination
           className="mt-8"
-          currentPage={1}
-          totalPages={20}
+          currentPage={pageN}
+          totalPages={totalPages}
           rootUrl="/blog"
         />
       </main>
