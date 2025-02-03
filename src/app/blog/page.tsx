@@ -4,6 +4,7 @@ import { FilterDropdown } from "@/features/blog/filter-dropdown";
 import { SortDropdown } from "@/features/blog/sort-dropdown";
 import { getAllCategories, getAllMdx } from "@/lib/mdx";
 import ArticleCard from "@/components/article-card";
+import Pagination from "@/components/pagination";
 
 type Props = {
   searchParams: Promise<{ [k: string]: string | undefined }>;
@@ -38,7 +39,7 @@ export default async function Blog({ searchParams }: Props) {
   });
 
   return (
-    <div className="min-h-screen max-w-3xl mx-auto pr-4 pl-8 mt-8">
+    <div className="min-h-screen max-w-3xl mx-auto px-8 mt-8">
       <main className="flex flex-col row-start-2 items-center sm:items-start">
         <div className="text-center w-full">
           <h1 className="text-4xl font-bold">Blog</h1>
@@ -67,6 +68,12 @@ export default async function Blog({ searchParams }: Props) {
             );
           })}
         </div>
+
+        <Pagination
+          currentPage={1}
+          totalPages={20}
+          rootUrl="/blog"
+        />
       </main>
     </div>
   );
