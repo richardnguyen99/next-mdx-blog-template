@@ -15,6 +15,7 @@ type Props = {
   totalPages: number;
   rootUrl: string;
   queryName?: string;
+  currentQueryString?: string;
 };
 
 export function Pagination({
@@ -22,25 +23,34 @@ export function Pagination({
   totalPages,
   rootUrl,
   className,
+  currentQueryString,
   queryName = "page",
   ...rest
 }: React.ComponentProps<"nav"> & Props) {
+  const pageUrl = (pageNumber: number) => { 
+    if (currentQueryString) {
+      return `${rootUrl}?${currentQueryString}&${queryName}=${pageNumber}`;
+    }
+
+    return `${rootUrl}?${queryName}=${pageNumber}`;
+  };
+
   return (
     <PaginationRoot className={className} {...rest}>
       <PaginationContent>
         <PaginationItem>
           {currentPage === 1 ? (
-            <PaginationPrevious href={`${rootUrl}?${queryName}=1`} aria-disabled />
+            <PaginationPrevious href={pageUrl(currentPage)} aria-disabled />
           ) : (
             <PaginationPrevious
-              href={`${rootUrl}?${queryName}=${currentPage - 1}`}
+              href={pageUrl(currentPage - 1)}
             />
           )}
         </PaginationItem>
 
         <PaginationItem>
           <PaginationLink
-            href={`${rootUrl}/?${queryName}=1`}
+            href={pageUrl(1)}
             isActive={currentPage === 1}
           >
             1
@@ -53,7 +63,7 @@ export function Pagination({
           i > 1 && i < totalPages ? (
             <PaginationItem key={i}>
               <PaginationLink
-                href={`${rootUrl}/?${queryName}=${i}`}
+                href={pageUrl(i)}
                 isActive={currentPage === i}
               >
                 {i}
@@ -67,7 +77,7 @@ export function Pagination({
         {totalPages > 1 && (
           <PaginationItem>
             <PaginationLink
-              href={`${rootUrl}/?${queryName}=${totalPages}`}
+              href={pageUrl(totalPages)}
               isActive={currentPage === totalPages}
             >
               {totalPages}
@@ -77,9 +87,9 @@ export function Pagination({
 
         <PaginationItem>
           {currentPage === totalPages ? (
-            <PaginationNext href={`${rootUrl}?${queryName}=${totalPages}`} aria-disabled />
+            <PaginationNext href={pageUrl(totalPages)} aria-disabled />
           ) : (
-            <PaginationNext href={`${rootUrl}?${queryName}=${currentPage + 1}`} />
+            <PaginationNext href={pageUrl(currentPage + 1)} />
           )}
         </PaginationItem>
       </PaginationContent>

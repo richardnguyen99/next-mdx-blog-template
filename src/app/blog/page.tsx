@@ -54,6 +54,11 @@ export default async function Blog({ searchParams }: Props) {
   const end = start + POST_PER_PAGE;
   const paginatedPosts = posts.slice(start, end);
 
+  const currentQueryString = new URLSearchParams();
+  if (filter && filter !== "all") {
+    currentQueryString.set("filter", filter);
+  }
+
   return (
     <div className="min-h-screen max-w-3xl mx-auto px-8 mt-8">
       <main className="flex flex-col row-start-2 items-center sm:items-start">
@@ -88,6 +93,7 @@ export default async function Blog({ searchParams }: Props) {
         <Pagination
           className="mt-8"
           currentPage={pageN}
+          currentQueryString={currentQueryString.toString()}
           totalPages={totalPages}
           rootUrl="/blog"
         />
