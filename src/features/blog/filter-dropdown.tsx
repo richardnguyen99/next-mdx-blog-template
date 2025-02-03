@@ -36,7 +36,7 @@ export function FilterDropdown(props: Props) {
       return;
     }
 
-    push(`?f=${encodeURIComponent(value)}`, {
+    push(`?filter=${encodeURIComponent(value)}`, {
       scroll: false,
     });
   }, [push]);
