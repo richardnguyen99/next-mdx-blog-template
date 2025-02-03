@@ -70,6 +70,7 @@ export default async function Blog({ searchParams }: Props) {
         </div>
 
         <Pagination
+          className="mt-8"
           currentPage={1}
           totalPages={20}
           rootUrl="/blog"
