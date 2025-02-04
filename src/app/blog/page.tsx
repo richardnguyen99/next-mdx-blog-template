@@ -14,16 +14,35 @@ type Props = {
   }>;
 };
 
+type Post = Awaited<ReturnType<typeof getAllMdx>>[number];
+
 const POST_PER_PAGE = 6;
 
 const filterPost = (category?: string) => {
-  return (post: Awaited<ReturnType<typeof getAllMdx>>[number]) => {
+  return (post: Post) => {
     if (!category || category === "all") {
       return true;
     }
 
     return post.frontmatter?.category === category;
   };
+};
+
+const sortStrategies: Record<string, (a: Post, b: Post) => number> = {
+  date: (a, b) => {
+    return (
+      new Date(b.frontmatter.date).getTime() -
+      new Date(a.frontmatter.date).getTime()
+    );
+  },
+
+  timeToRead: (a, b) => {
+    return a.fields.timeToRead.time - b.fields.timeToRead.time;
+  },
+};
+
+const sortPost = (sortBy: string) => {
+  return (a: Post, b: Post) => sortStrategies[sortBy]?.(a, b) || 0;
 };
 
 export default async function Blog({ searchParams }: Props) {
@@ -52,7 +71,7 @@ export default async function Blog({ searchParams }: Props) {
     pageNumber < 1 ? 1 : pageNumber > totalPages ? totalPages : pageNumber;
   const start = (pageN - 1) * POST_PER_PAGE;
   const end = start + POST_PER_PAGE;
-  const paginatedPosts = posts.slice(start, end);
+  const paginatedPosts = posts.slice(start, end).sort(sortPost(sort || "date"));
 
   const currentQueryString = new URLSearchParams();
 
