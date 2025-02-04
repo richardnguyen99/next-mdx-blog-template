@@ -29,6 +29,7 @@ export function FilterDropdown(props: Props) {
   const { push } = useRouter();
 
   const handleChange = React.useCallback((value: string) => {
+
     if (value === "all") {
       push(`/blog`, {
         scroll: false,
@@ -36,7 +37,10 @@ export function FilterDropdown(props: Props) {
       return;
     }
 
-    push(`?filter=${encodeURIComponent(value)}`, {
+    const searchParams = new URLSearchParams();
+    searchParams.set("filter", value);
+
+    push(`?${searchParams}`, {
       scroll: false,
     });
   }, [push]);

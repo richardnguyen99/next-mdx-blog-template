@@ -27,7 +27,7 @@ const filterPost = (category?: string) => {
 };
 
 export default async function Blog({ searchParams }: Props) {
-  const { filter = "all", page = "1" } = await searchParams;
+  const { filter, page = "1", sort } = await searchParams;
   const mdxData = await getAllMdx();
   const categories = await getAllCategories();
 
@@ -64,6 +64,10 @@ export default async function Blog({ searchParams }: Props) {
     currentQueryString.set("page", pageN.toString());
   }
 
+  if (sort) {
+    currentQueryString.set("sort", sort);
+  }
+
   return (
     <div className="min-h-screen max-w-3xl mx-auto px-8 mt-8">
       <main className="flex flex-col row-start-2 items-center sm:items-start">
@@ -77,8 +81,14 @@ export default async function Blog({ searchParams }: Props) {
             </h3>
 
             <div className="flex items-center gap-2">
-              <FilterDropdown currentFilter={filter} items={categoryItems} />
-              <SortDropdown />
+              <FilterDropdown
+                currentFilter={filter || "all"}
+                items={categoryItems}
+              />
+              <SortDropdown
+                currentSort={sort || "date"}
+                currentSearchParams={currentQueryString}
+              />
             </div>
           </div>
         </div>
