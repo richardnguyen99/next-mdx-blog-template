@@ -54,7 +54,7 @@ export default async function BlogPost({ params }: SlugPostProps) {
         </div>
       </div>
 
-      <div className="prose prose-slate lg:prose-lg dark:prose-invert max-w-none">
+      <div className="prose prose-slate lg:prose-lg dark:prose-invert pt-12">
         <MDXRemote components={shortCodes} source={rawContent} />
       </div>
 
