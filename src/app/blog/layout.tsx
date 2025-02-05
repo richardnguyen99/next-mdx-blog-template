@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 
 const BlogLayout: React.FC<Props> = ({ children }) => {
   return (
-    <div className="min-h-screen max-w-3xl mx-auto px-8 mt-8">
+    <div className="min-h-screen max-w-3xl mx-auto px-2 lg:px-4 xl:px-8 mt-8">
       <main className="flex flex-col row-start-2 items-center sm:items-start">
         {children}
       </main>
