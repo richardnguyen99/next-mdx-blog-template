@@ -88,53 +88,50 @@ export default async function Blog({ searchParams }: Props) {
   }
 
   return (
-    <div className="min-h-screen max-w-3xl mx-auto px-8 mt-8">
-      <main className="flex flex-col row-start-2 items-center sm:items-start">
-        <div className="text-center w-full">
-          <h1 className="text-4xl font-bold">Blog</h1>
+    <>
+      <div className="text-center w-full">
+        <h1 className="text-4xl font-bold">Blog</h1>
 
-          <div className="flex items-center justify-between mt-8 pb-4 mb-4 border-b">
-            <h3>
-              All posts{" "}
-              <span className="text-muted">({posts.length} total)</span>
-            </h3>
+        <div className="flex items-center justify-between mt-8 pb-4 mb-4 border-b">
+          <h3>
+            All posts <span className="text-muted">({posts.length} total)</span>
+          </h3>
 
-            <div className="flex items-center gap-2">
-              <FilterDropdown
-                currentFilter={filter || "all"}
-                items={categoryItems}
-              />
-              <SortDropdown
-                currentSort={sort || "date"}
-                currentSearchParams={currentQueryString}
-              />
-            </div>
+          <div className="flex items-center gap-2">
+            <FilterDropdown
+              currentFilter={filter || "all"}
+              items={categoryItems}
+            />
+            <SortDropdown
+              currentSort={sort || "date"}
+              currentSearchParams={currentQueryString}
+            />
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {paginatedPosts.map((post) => {
-            const { frontmatter, fields, id } = post;
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {paginatedPosts.map((post) => {
+          const { frontmatter, fields, id } = post;
 
-            return (
-              <ArticleCard
-                key={id}
-                frontmatter={frontmatter}
-                fields={fields}
-                id={id}
-              />
-            );
-          })}
-        </div>
+          return (
+            <ArticleCard
+              key={id}
+              frontmatter={frontmatter}
+              fields={fields}
+              id={id}
+            />
+          );
+        })}
+      </div>
 
-        <Pagination
-          className="mt-8"
-          currentPage={pageN}
-          currentQueryString={currentQueryString}
-          totalPages={totalPages}
-          rootUrl="/blog"
-        />
-      </main>
-    </div>
+      <Pagination
+        className="mt-8"
+        currentPage={pageN}
+        currentQueryString={currentQueryString}
+        totalPages={totalPages}
+        rootUrl="/blog"
+      />
+    </>
   );
 }
