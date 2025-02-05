@@ -1,6 +1,7 @@
 import React from "react";
 import fs from "node:fs/promises";
 import { MDXRemote } from "next-mdx-remote/rsc";
+import { WithContext, TechArticle } from "schema-dts";
 
 import { getMdxFromSlug } from "@/lib/mdx";
 import { Params, SlugPostProps } from "./layout";
@@ -22,10 +23,30 @@ export default async function BlogPost({ params }: SlugPostProps) {
   const { slug } = await params;
   const { frontmatter, rawContent, fields } = await getMdxFromSlug(slug);
 
+  const jsonLd: WithContext<TechArticle> = {
+    "@id": `${slug}`,
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    headline: frontmatter.title,
+    description: frontmatter.description,
+    image: frontmatter.thumbnail,
+    datePublished: frontmatter.date,
+    keywords: frontmatter.tags,
+  };
+
   return (
     <React.Fragment>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
+
       <div className="w-full text-center">
-        <h1 className="text-black dark:text-white text-2xl font-bold lg:text-5xl lg:font-black">{frontmatter.title}</h1>
+        <h1 className="text-black dark:text-white text-2xl font-bold lg:text-5xl lg:font-black">
+          {frontmatter.title}
+        </h1>
 
         <div className="flex items-center justify-between w-full mt-4 mb-4 pb-4 text-sm text-gray-500 border-b dark:border-slate-800 border-b-gray-200">
           <div>{fields.timeToRead.text}</div>
