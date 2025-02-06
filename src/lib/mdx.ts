@@ -1,10 +1,11 @@
-import fs from "node:fs/promises";
+import * as fs from "node:fs/promises";
+import * as path from "node:path";
 import { createHmac } from "node:crypto";
 import matter from "gray-matter";
+import readingTime from "reading-time";
 
 
 import { BlogData, Frontmatter, BlogCategory } from "@/types/mdx";
-import readingTime from "reading-time";
 
 function checkMdxFrontmatter(data: object): data is Frontmatter {
   if (typeof data !== "object") {
@@ -25,6 +26,17 @@ function checkMdxFrontmatter(data: object): data is Frontmatter {
     keys.includes("published") &&
     keys.includes("publishedAt")
   );
+}
+
+export function getPostDirectory(): string {
+  return path.resolve(process.cwd(), "src", "posts");
+}
+
+export async function getAllSlugs(): Promise<string[]> {
+  const postDirectory = getPostDirectory();
+  const files = await fs.readdir(postDirectory);
+
+  return files.map((file) => file.replace(/\.mdx$/, ""));
 }
 
 export async function getMdxFromSlug(

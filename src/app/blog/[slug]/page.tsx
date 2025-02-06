@@ -1,10 +1,8 @@
 import React from "react";
-import fs from "node:fs/promises";
-import * as path from "path";
 import { MDXRemote } from "next-mdx-remote/rsc";
-import { WithContext, TechArticle } from "schema-dts";
+import { type WithContext, type TechArticle } from "schema-dts";
 
-import { getMdxFromSlug } from "@/lib/mdx";
+import { getAllSlugs, getMdxFromSlug } from "@/lib/mdx";
 import { Params, SlugPostProps } from "./layout";
 import shortCodes from "./short-codes";
 
@@ -13,13 +11,9 @@ export const dynamicParams = false;
 
 // Generate static paths at build time
 export async function generateStaticParams(): Promise<Params[]> {
-  const resolvedPath = path.resolve(process.cwd(), "src", "posts");
-  console.log("resolvedPath", resolvedPath);
-  const files = await fs.readdir(resolvedPath);
+  const slugs = await getAllSlugs();
 
-  return files.map((file) => ({
-    slug: file.replace(/\.mdx$/, ""),
-  }));
+  return slugs.map((slug) => ({ slug }));
 }
 
 export default async function BlogPost({ params }: SlugPostProps) {
