@@ -1,6 +1,6 @@
 import React from "react";
 import fs from "node:fs/promises";
-import path from "node:path";
+import * as path from "path";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { WithContext, TechArticle } from "schema-dts";
 
@@ -13,7 +13,7 @@ export const dynamicParams = false;
 
 // Generate static paths at build time
 export async function generateStaticParams(): Promise<Params[]> {
-  const files = await fs.readdir(path.join(process.cwd(), "src", "posts"));
+  const files = await fs.readdir(path.resolve(process.cwd(), "src", "posts"));
 
   return files.map((file) => ({
     slug: file.replace(/\.mdx$/, ""),
