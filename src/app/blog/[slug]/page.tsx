@@ -13,7 +13,9 @@ export const dynamicParams = false;
 
 // Generate static paths at build time
 export async function generateStaticParams(): Promise<Params[]> {
-  const files = await fs.readdir(path.resolve(process.cwd(), "src", "posts"));
+  const resolvedPath = path.resolve(process.cwd(), "src", "posts");
+  console.log("resolvedPath", resolvedPath);
+  const files = await fs.readdir(resolvedPath);
 
   return files.map((file) => ({
     slug: file.replace(/\.mdx$/, ""),
