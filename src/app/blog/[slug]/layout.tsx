@@ -28,6 +28,7 @@ export async function generateMetadata({
       ...sharedMetadata.openGraph,
       title: `${frontmatter.title} | Next MDX Blog Template`,
       description: `${frontmatter.description}`,
+      url: `${sharedMetadata.metadataBase}/blog/${slug}`,
       images: [
         {
           url: frontmatter.thumbnail,
@@ -40,6 +41,8 @@ export async function generateMetadata({
 
     twitter: {
       ...sharedMetadata.twitter,
+      card: "summary_large_image",
+      creator: `${frontmatter.author}`,
       title: `${frontmatter.title} | Next MDX Blog Template`,
       description: `${frontmatter.description}`,
       images: [
