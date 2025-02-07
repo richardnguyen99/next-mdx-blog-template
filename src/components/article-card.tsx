@@ -1,11 +1,11 @@
 import React from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { CalendarIcon, TagIcon } from "@primer/octicons-react";
 
 import { buttonVariants } from "./ui/button";
 import { cn } from "@/lib/utils";
 import { BlogFields, Frontmatter } from "@/types/mdx";
+import ImageCard from "./image-card";
 
 type ArticleCardProps = {
   frontmatter: Frontmatter;
@@ -25,13 +25,7 @@ const ArticleCard: React.FC<
       )}
       {...rest}
     >
-      <Image
-        src={frontmatter.thumbnail}
-        alt={frontmatter.title}
-        className="w-full h-40 object-cover"
-        width={400}
-        height={160}
-      />
+      <ImageCard src={frontmatter.thumbnail} />
 
       <div className="p-4 flex flex-col flex-grow">
         <h3 className="">
