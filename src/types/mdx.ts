@@ -9,6 +9,7 @@ export type Frontmatter = {
   tags: string[];
   category: string;
   thumbnail: string;
+  thumbnail_alt: string;
   published: boolean;
   publishedAt: string;
 };

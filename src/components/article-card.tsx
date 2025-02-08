@@ -25,7 +25,7 @@ const ArticleCard: React.FC<
       )}
       {...rest}
     >
-      <ImageCard src={frontmatter.thumbnail} />
+      <ImageCard src={frontmatter.thumbnail} alt={frontmatter.thumbnail_alt} />
 
       <div className="p-4 flex flex-col flex-grow">
         <h3 className="">

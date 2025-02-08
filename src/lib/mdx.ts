@@ -23,6 +23,7 @@ function checkMdxFrontmatter(data: object): data is Frontmatter {
     keys.includes("tags") &&
     keys.includes("category") &&
     keys.includes("thumbnail") &&
+    keys.includes("thumbnail_alt") &&
     keys.includes("published") &&
     keys.includes("publishedAt")
   );
