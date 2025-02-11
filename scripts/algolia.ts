@@ -8,6 +8,7 @@ import remarkParse from "remark-parse";
 import remarkMdx from "remark-mdx";
 import { visit } from "unist-util-visit";
 import { getCldImageUrl } from "next-cloudinary";
+import { AlgoliaAttributes } from "@/types/algolia";
 
 function extractHeadings(content: string) {
   const headings: {
@@ -73,7 +74,7 @@ const processRecords = async () => {
         tags: frontmatter.data.tags,
         imageUrl: cld,
         headings,
-      };
+      } satisfies AlgoliaAttributes & { objectID: string };
     })
   );
 

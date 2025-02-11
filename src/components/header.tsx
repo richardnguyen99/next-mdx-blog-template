@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Link, { LinkProps } from "next/link";
 import { RssIcon, LinkExternalIcon, MoonIcon } from "@primer/octicons-react";
