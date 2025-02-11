@@ -27,6 +27,7 @@ import {
 import { cn } from "@/lib/utils";
 import { client as algoliaClient } from "@/lib/algolia";
 import { AlgoliaAttributes } from "@/types/algolia";
+import { useSearchKeyboardEvents } from "@/hooks/use-search-keyboard-events";
 
 const SearchContext = React.createContext<{
   open: boolean;
@@ -108,13 +109,23 @@ function SearchPanel() {
 }
 
 export default function Search() {
+  const searchButtonRef = React.useRef<HTMLButtonElement>(null);
   const [open, setOpen] = React.useState(false);
+
+
+  useSearchKeyboardEvents({
+    isOpen: open,
+    onOpen: () => setOpen(true),
+    onClose: () => setOpen(false),
+    searchButtonRef
+  })
 
   return (
     <SearchContext.Provider value={{ open, setOpen }}>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button
+            ref={searchButtonRef}
             className={cn(
               buttonVariants({
                 variant: "outline",
