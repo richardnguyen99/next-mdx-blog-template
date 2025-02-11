@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import { useRouter } from "next/navigation";
@@ -8,10 +8,10 @@ import {
   RefreshCcwIcon,
   SearchIcon,
 } from "lucide-react";
-import { SearchBox, Hits } from "react-instantsearch";
+import { SearchBox, Hits, Highlight } from "react-instantsearch";
 import { InstantSearchNext } from "react-instantsearch-nextjs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { type Hit as HitProps } from "algoliasearch/lite";
+import { type Hit as HitProps } from "instantsearch.js";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -40,41 +40,44 @@ const SearchContext = React.createContext<{
 function Hit({ hit }: { hit: HitProps<AlgoliaAttributes> }) {
   const router = useRouter();
   const { setOpen } = React.useContext(SearchContext);
-  
+
   const handleClick = React.useCallback(
     async (evt: React.MouseEvent<HTMLAnchorElement>) => {
       evt.preventDefault();
       setOpen(false);
 
-      
       router.push(evt.currentTarget.href);
     },
     [router, setOpen]
   );
 
   return (
-    <div className="rounded-2xl p-4 border border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+    <Link
+      onClick={handleClick}
+      href={`/blog/${hit.objectID}`}
+      className="inline-block p-4 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+    >
       <div className="flex items-center gap-2 mb-2">
         <BookIcon className="w-4 h-4" />
-        <Link
-          href={`/blog/${hit.objectID}`}
-          onClick={handleClick}
-          className="text-lg font-bold"
-        >
-          {hit.title}
-        </Link>
+        <h3 className="text-lg font-bold">
+          <Highlight<HitProps<AlgoliaAttributes>> attribute="title" hit={hit} />
+        </h3>
       </div>
 
       <p className="text-slate-300 dark:text-slate-500 line-clamp-2">
-        {hit.description}
+        <Highlight<HitProps<AlgoliaAttributes>>
+          attribute="description"
+          hit={hit}
+        />
       </p>
-    </div>
+    </Link>
   );
 }
 
 function SearchPanel() {
   return (
     <InstantSearchNext
+      insights
       searchClient={algoliaClient}
       indexName={process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME}
     >
@@ -112,13 +115,12 @@ export default function Search() {
   const searchButtonRef = React.useRef<HTMLButtonElement>(null);
   const [open, setOpen] = React.useState(false);
 
-
   useSearchKeyboardEvents({
     isOpen: open,
     onOpen: () => setOpen(true),
     onClose: () => setOpen(false),
-    searchButtonRef
-  })
+    searchButtonRef,
+  });
 
   return (
     <SearchContext.Provider value={{ open, setOpen }}>
@@ -137,7 +139,7 @@ export default function Search() {
             Search articles...
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-[678px] animation-none">
+        <DialogContent className="sm:max-w-3xl animation-none">
           <VisuallyHidden>
             <DialogHeader>
               <DialogTitle>Search</DialogTitle>
