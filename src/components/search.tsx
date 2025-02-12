@@ -90,7 +90,7 @@ function SearchPanel() {
           <LoaderCircleIcon className="w-6 h-6 animate-spin " />
         )}
         classNames={{
-          root: cn("relative"),
+          root: cn("relative h-16 mt-4 md:mt-0"),
           submit: cn("absolute left-3 top-1/2 -translate-y-1/2"),
           reset: cn("absolute right-3 top-1/2 -translate-y-1/2"),
           loadingIndicator: cn("absolute right-10 top-1/2 -translate-y-1/2"),
@@ -99,10 +99,11 @@ function SearchPanel() {
           ),
         }}
       />
+
       <Hits<AlgoliaAttributes>
         classNames={{
-          root: cn("grid gap-4"),
-          list: cn("flex flex-col gap-4 h-[480px] overflow-y-auto"),
+          root: cn("h-full mt-8"),
+          list: cn("flex flex-col gap-4 h-full md:h-[480px] overflow-y-auto"),
         }}
         hitComponent={({ hit }) => <Hit hit={hit} />}
         bannerComponent={() => <Image src="/twitter-card.png" alt="banner" />}
@@ -139,7 +140,7 @@ export default function Search() {
             Search articles...
           </Button>
         </DialogTrigger>
-        <DialogContent className="sm:max-w-3xl animation-none">
+        <DialogContent className="max-w-full max-h-full h-full md:h-fit md:max-w-3xl [&>button]:block md:[&>button]:hidden">
           <VisuallyHidden>
             <DialogHeader>
               <DialogTitle>Search</DialogTitle>
