@@ -6,23 +6,13 @@ import { SearchBox as InstantSearchBox } from "react-instantsearch";
 
 import { cn } from "@/lib/utils";
 
-function SearchBox(): JSX.Element {
+type Props = {
+  onKeyDown: React.KeyboardEventHandler<HTMLDivElement>;
+};
+
+function SearchBox({ onKeyDown }: Props): JSX.Element {
   const ref = React.useRef<HTMLDivElement>(null);
 
-  const handleKeyDown = React.useCallback((evt: React.KeyboardEvent) => {
-    const key = evt.key;
-
-    if (key === "ArrowDown") {
-      evt.preventDefault();
-      console.log("Arrow down pressed");
-    } else if (key === "ArrowUp") {
-      evt.preventDefault();
-      console.log("Arrow up pressed");
-    } else if (key === "Enter") {
-      evt.preventDefault();
-      console.log("Enter pressed");
-    }
-  }, []);
 
   React.useEffect(() => {
     if (ref && ref.current !== null) {
@@ -49,7 +39,7 @@ function SearchBox(): JSX.Element {
           "flex h-16 w-full rounded-md border bg-slate-100 border-slate-200 hover:bg-slate-200 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 dark:hover:bg-slate-800 px-12 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 dark:focus-visible:ring-slate-700 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50 md:text-lg"
         ),
       }}
-      onKeyDown={handleKeyDown}
+      onKeyDown={onKeyDown}
     />
   );
 }

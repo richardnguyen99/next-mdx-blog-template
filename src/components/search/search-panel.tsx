@@ -1,20 +1,66 @@
 "use client";
 
 import React from "react";
+import { useInstantSearch } from "react-instantsearch";
+import { useRouter } from "next/navigation";
 
 import SearchBox from "./search-box";
 import SearchResult from "./search-result";
 import SearchEmptyQueryBoundary from "./search-empty-boundary";
 import SearchNoResultsBoundary from "./search-no-result-boundary";
 
-function SearchPanel(): React.JSX.Element {
-  const panelRef = React.useRef<HTMLDivElement>(null);
+type Props = {
+  isOpen: boolean;
+  onOpen: () => void;
+  onClose: () => void;
+}
 
-  React.useEffect(() => {
-    if (panelRef && panelRef.current !== null) {
-      console.log("Search panel ref", panelRef.current);
+function SearchPanel({ onClose }: Props): React.JSX.Element {
+  const { results } = useInstantSearch();
+  const panelRef = React.useRef<HTMLDivElement>(null);
+  const { push } = useRouter();
+
+  const [activeHit, setActiveHit] = React.useState<number>(0);
+  const hitRefs = React.useMemo(
+    () =>
+      Array.from({ length: results.hits.length }, () =>
+        React.createRef<HTMLAnchorElement>()
+      ),
+    [results.hits]
+  );
+
+  const handleKeyDown = React.useCallback((evt: React.KeyboardEvent<HTMLDivElement>) => {
+    const key = evt.key;
+
+    if (key === "ArrowDown") {
+      evt.preventDefault();
+
+      const nextHit = activeHit + 1;
+      if (nextHit < hitRefs.length) {
+        setActiveHit(nextHit);
+      }
+
+    } else if (key === "ArrowUp") {
+      evt.preventDefault();
+
+      const prevHit = activeHit - 1;
+
+      if (prevHit >= 0) {
+        setActiveHit(prevHit);
+      }
+
+    } else if (key === "Enter") {
+      evt.preventDefault();
+
+      const hit = hitRefs[activeHit].current;
+      if (hit) {
+        onClose();
+        push(hit.href);
+      }
+    } else {
+      setActiveHit(0);
     }
-  }, []);
+  }, [activeHit, hitRefs, onClose, push]);
 
   return (
     <div
@@ -29,11 +75,11 @@ function SearchPanel(): React.JSX.Element {
       </div>
 
       <div className="flex flex-col gap-2">
-        <SearchBox />
+        <SearchBox onKeyDown={handleKeyDown} />
 
         <SearchEmptyQueryBoundary fallback={null}>
           <SearchNoResultsBoundary>
-            <SearchResult />
+            <SearchResult activeHit={activeHit} setActiveHit={setActiveHit} hitRefs={hitRefs} />
           </SearchNoResultsBoundary>
         </SearchEmptyQueryBoundary>
       </div>

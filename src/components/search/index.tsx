@@ -23,16 +23,20 @@ function Search(): React.JSX.Element {
   const searchButtonRef = React.useRef<HTMLButtonElement>(null);
   const [open, setOpen] = React.useState(false);
 
+  const handleClose = React.useCallback(() => {
+    setOpen(false);
+  }, []);
+
+  const handleOpen = React.useCallback(() => {
+    setOpen(true);
+  }, []);
+
   useSearchKeyboardEvents({
     isOpen: open,
-    onOpen: () => setOpen(true),
-    onClose: () => setOpen(false),
+    onOpen: handleOpen,
+    onClose: handleClose, 
     searchButtonRef,
   });
-
-  React.useEffect(() => {
-    console.log("Search button ref", searchButtonRef.current);
-  }, []);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -66,7 +70,7 @@ function Search(): React.JSX.Element {
           searchClient={algoliaClient}
           indexName={process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME}
         >
-          <SearchPanel />
+          <SearchPanel onOpen={handleOpen} onClose={handleClose} isOpen />
         </InstantSearchNext>
       </DialogContent>
     </Dialog>

@@ -10,16 +10,21 @@ import { type AlgoliaAttributes } from "@/types/algolia";
 type InternalHitProps = Omit<LinkProps, "href"> & {
   hit: HitProps<AlgoliaAttributes>;
   ref?: React.Ref<HTMLAnchorElement>;
-  isFocused?: boolean;
+  active?: boolean;
 };
 
-function HitComponent({ hit, ...rest }: InternalHitProps): JSX.Element {
+function HitComponent({
+  hit,
+  active = false,
+  ...rest
+}: InternalHitProps): JSX.Element {
   return (
     <Link
       {...rest}
       href={`/blog/${hit.objectID}`}
       className={cn(
-        "inline-block p-4 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+        "inline-block p-4 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors",
+        active && "bg-slate-100 dark:bg-slate-800 dark:border-slate-700"
       )}
     >
       <div className="flex items-center gap-2 mb-2">
