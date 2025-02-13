@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { type JSX } from "react";
 import { useRouter } from "next/navigation";
 import {
   BookIcon,
@@ -13,7 +13,7 @@ import { InstantSearchNext } from "react-instantsearch-nextjs";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { type Hit as HitProps } from "instantsearch.js";
 import Image from "next/image";
-import Link from "next/link";
+import Link, { LinkProps } from "next/link";
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import {
@@ -37,7 +37,18 @@ const SearchContext = React.createContext<{
   setOpen: () => {},
 });
 
-function Hit({ hit }: { hit: HitProps<AlgoliaAttributes> }) {
+type InternalHitProps = Omit<LinkProps, "href"> & {
+  hit: HitProps<AlgoliaAttributes>;
+  ref?: React.Ref<HTMLAnchorElement>;
+  isFocused?: boolean;
+};
+
+function Hit({
+  hit,
+  ref,
+  isFocused = false,
+  ...rest
+}: InternalHitProps): JSX.Element {
   const router = useRouter();
   const { setOpen } = React.useContext(SearchContext);
 
@@ -53,9 +64,14 @@ function Hit({ hit }: { hit: HitProps<AlgoliaAttributes> }) {
 
   return (
     <Link
+      {...rest}
+      ref={ref}
       onClick={handleClick}
       href={`/blog/${hit.objectID}`}
-      className="inline-block p-4 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+      className={cn(
+        "inline-block p-4 w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-transparent hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors",
+        isFocused && "ring-2 ring-sky-500"
+      )}
     >
       <div className="flex items-center gap-2 mb-2">
         <BookIcon className="w-4 h-4" />
@@ -75,39 +91,61 @@ function Hit({ hit }: { hit: HitProps<AlgoliaAttributes> }) {
 }
 
 function SearchPanel() {
+  const hitsRef = React.useRef<HTMLAnchorElement[]>([]);
+  const [searchFocused] = React.useState(true);
+
+  React.useEffect(() => {
+    console.log(hitsRef);
+  }, []);
+
   return (
     <InstantSearchNext
       insights
       searchClient={algoliaClient}
       indexName={process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME}
     >
-      <SearchBox
-        searchAsYouType
-        placeholder="Search articles..."
-        submitIconComponent={() => <SearchIcon className="w-6 h-6" />}
-        resetIconComponent={() => <RefreshCcwIcon className="w-6 h-6" />}
-        loadingIconComponent={() => (
-          <LoaderCircleIcon className="w-6 h-6 animate-spin " />
-        )}
-        classNames={{
-          root: cn("relative h-16 mt-4 md:mt-0"),
-          submit: cn("absolute left-3 top-1/2 -translate-y-1/2"),
-          reset: cn("absolute right-3 top-1/2 -translate-y-1/2"),
-          loadingIndicator: cn("absolute right-10 top-1/2 -translate-y-1/2"),
-          input: cn(
-            "flex h-16 w-full rounded-md border bg-slate-100 border-slate-200 hover:bg-slate-200 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 dark:hover:bg-slate-800 px-12 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 dark:focus-visible:ring-slate-700 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50 md:text-lg"
-          ),
-        }}
-      />
+      <div tabIndex={0}>
+        <SearchBox
+          autoFocus={searchFocused}
+          searchAsYouType
+          placeholder="Search articles..."
+          submitIconComponent={() => <SearchIcon className="w-6 h-6" />}
+          resetIconComponent={() => <RefreshCcwIcon className="w-6 h-6" />}
+          loadingIconComponent={() => (
+            <LoaderCircleIcon className="w-6 h-6 animate-spin " />
+          )}
+          classNames={{
+            root: cn("relative h-16 mt-4 md:mt-0"),
+            submit: cn("absolute left-3 top-1/2 -translate-y-1/2"),
+            reset: cn("absolute right-3 top-1/2 -translate-y-1/2"),
+            loadingIndicator: cn("absolute right-10 top-1/2 -translate-y-1/2"),
+            input: cn(
+              "flex h-16 w-full rounded-md border bg-slate-100 border-slate-200 hover:bg-slate-200 hover:border-slate-300 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 dark:hover:bg-slate-800 px-12 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 dark:focus-visible:ring-slate-700 focus-visible:ring-slate-400 disabled:cursor-not-allowed disabled:opacity-50 md:text-lg"
+            ),
+          }}
+          onKeyDown={(evt) => {
+            console.log("keydown", evt.key);
+          }}
+        />
 
-      <Hits<AlgoliaAttributes>
-        classNames={{
-          root: cn("h-full mt-8"),
-          list: cn("flex flex-col gap-4 h-full md:h-[480px] overflow-y-auto"),
-        }}
-        hitComponent={({ hit }) => <Hit hit={hit} />}
-        bannerComponent={() => <Image src="/twitter-card.png" alt="banner" />}
-      />
+        <Hits<AlgoliaAttributes>
+          classNames={{
+            root: cn("h-full mt-8"),
+            list: cn("flex flex-col gap-4 h-full md:h-[480px] overflow-y-auto"),
+          }}
+          hitComponent={({ hit }) => (
+            <Hit
+              ref={(el) => {
+                if (el) {
+                  hitsRef.current.push(el);
+                }
+              }}
+              hit={hit}
+            />
+          )}
+          bannerComponent={() => <Image src="/twitter-card.png" alt="banner" />}
+        />
+      </div>
     </InstantSearchNext>
   );
 }
