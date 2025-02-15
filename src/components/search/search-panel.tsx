@@ -11,6 +11,7 @@ import {
 } from "@/types/algolia";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import { File, Search } from "lucide-react";
 
 type Props = {
   isOpen: boolean;
@@ -41,15 +42,22 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
         React.MouseEvent,
         React.KeyboardEvent
       >({
+        id: "algolia-autocomplete",
+        placeholder: "Search articles...",
+        openOnFocus: true,
+        defaultActiveItemId: 0,
+        initialState: {
+          query: "",
+        },
         onStateChange({ state }) {
           // (2) Synchronize the Autocomplete state with the React state.
           setAutocompleteState(state);
         },
         navigator: {
-          navigate({ itemUrl}) {
+          navigate({ itemUrl }) {
             push(itemUrl);
             onClose();
-          }
+          },
         },
         getSources({ query }) {
           if (!query) {
@@ -101,24 +109,23 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
   );
 
   return (
-    <div className="flex flex-col gap-2 p-4 rounded-lg border border-border bg-background">
-      <div className="flex items-center justify-between mt-4 md:mt-0">
+    <div className="ais">
+      <div className="ais-header">
         <h2 className="text-lg font-semibold">Search</h2>
         <p className="text-sm text-slate-500">
           Search through the content of this site.
         </p>
       </div>
 
-      <div className="flex flex-col gap-2">
+      <div className="ais-container">
         <form
-          className="aa-Form"
+          className="ais-form"
           {...autocomplete.getFormProps({ inputElement: inputRef.current })}
         >
+          <Search className="ais-svg" />
           <input
             ref={inputRef}
-            className={cn(
-              "flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
-            )}
+            className={cn("ais-search")}
             {...(autocomplete.getInputProps({
               inputElement: inputRef.current!,
               autoFocus: true,
@@ -126,15 +133,20 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
           />
         </form>
 
-        <div className="aa-Panel" {...autocomplete.getPanelProps({})}>
+        <div className="ais-panel" {...autocomplete.getPanelProps({})}>
           {autocompleteState.isOpen &&
             autocompleteState.collections.map((collection, index) => {
               const { source, items } = collection;
 
               return (
-                <div key={`source-${index}`} className="aa-Source">
+                <div key={`source-${index}`} className="ais-source">
+                  <h3 className="ais-source-id">{source.sourceId}</h3>
+
                   {items.length > 0 && (
-                    <ul className="aa-List" {...autocomplete.getListProps()}>
+                    <ul
+                      className="ais-source-list"
+                      {...autocomplete.getListProps()}
+                    >
                       {items.map((item) => {
                         const itemProps = autocomplete.getItemProps({
                           item,
@@ -142,18 +154,22 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
                           onClick: () => {
                             push(`/blog/${item.objectID}`);
                             onClose();
-                          }
+                          },
                         });
 
                         return (
-                        <li
-                          key={item.objectID}
-                          className="aa-Item"
-                          {...itemProps}
-                        >
-                          {item.title}
-                        </li>
-                      )})}
+                          <li
+                            key={item.objectID}
+                            className="ais-source-item"
+                            {...itemProps}
+                          >
+                            {source.sourceId === "article" && (
+                              <File />
+                            )}
+                            <span>{item.title}</span>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>
