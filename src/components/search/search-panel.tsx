@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useRouter } from "next/navigation";
-import { File, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
 import {
   InternalSearchHit,
@@ -12,7 +12,8 @@ import {
 } from "@/types/algolia";
 import { cn } from "@/lib/utils";
 import { createStoredSearches } from "./create-stored-searches";
-import useMemoizedAutocomplete from "./use-autocomplete";
+import useMemoizedAutocomplete, { isModifierEvent } from "./use-autocomplete";
+import SearchScreen from "./search-screen";
 
 type Props = {
   isOpen: boolean;
@@ -102,51 +103,18 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
           />
         </form>
 
-        <div className="ais-panel" {...autocomplete.getPanelProps({})}>
-          {autocompleteState.isOpen &&
-            autocompleteState.collections.map((collection, index) => {
-              const { source, items } = collection;
+        <SearchScreen
+          {...autocomplete}
+          state={autocompleteState}
+          onItemClick={(item, evt) => {
+            saveRecentSearch(item);
+            push(`/blog/${item.objectID}`);
 
-              return (
-                <div key={`source-${index}`} className="ais-source">
-                  <h3 className="ais-source-id">{source.sourceId}</h3>
-
-                  {items.length > 0 && (
-                    <ul
-                      className="ais-source-list"
-                      {...autocomplete.getListProps()}
-                    >
-                      {items.map((item) => {
-                        const itemProps = autocomplete.getItemProps({
-                          item,
-                          source,
-                          onClick: () => {
-                            push(`/blog/${item.objectID}`);
-                            onClose();
-                          },
-                        });
-
-                        return (
-                          <li
-                            key={item.objectID}
-                            className="ais-source-item"
-                            {...itemProps}
-                          >
-                            {source.sourceId === "article" ? (
-                              <File />
-                            ) : (
-                              <Search />
-                            )}
-                            <span>{item.title}</span>
-                          </li>
-                        );
-                      })}
-                    </ul>
-                  )}
-                </div>
-              );
-            })}
-        </div>
+            if (!isModifierEvent(evt)) {
+              onClose();
+            }
+          }}
+        />
       </div>
     </div>
   );

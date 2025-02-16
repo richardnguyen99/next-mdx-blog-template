@@ -1,41 +1,59 @@
 import React, { type JSX } from "react";
-import Image from "next/image";
-import { Hits } from "react-instantsearch";
+import { Search, File } from "lucide-react";
 
-import { type InternalSearchAlgoliaAttributes } from "@/types/algolia";
-import { cn } from "@/lib/utils";
-import HitComponent from "./hit";
+import useMemoizedAutocomplete from "./use-autocomplete";
+import {
+  InternalSearchHitWithParent,
+  InternalSearchState,
+} from "@/types/algolia";
 
-type Props = {
-  hitRefs: React.RefObject<HTMLAnchorElement | null>[];
-  activeHit: number;
-  setActiveHit: (hit: number) => void;
+type Props = ReturnType<typeof useMemoizedAutocomplete> & {
+  state: InternalSearchState<InternalSearchHitWithParent>;
+  onItemClick: (
+    item: InternalSearchHitWithParent,
+    event: MouseEvent | KeyboardEvent
+  ) => void;
 };
 
-function SearchResult({ hitRefs, activeHit }: Props): JSX.Element {
+function SearchResult({ state, onItemClick, ...rest }: Props): JSX.Element {
   return (
-    <Hits<InternalSearchAlgoliaAttributes>
-      classNames={{
-        root: cn("h-full mt-8"),
-        list: cn("flex flex-col gap-4 max-h-full overflow-y-auto"),
-      }}
-      hitComponent={({ hit }) => (
-        <HitComponent
-          ref={(el) => {
-            const position = hit.__position - 1;
+    <div className="ais-panel" {...rest.getPanelProps({})}>
+      {state.isOpen &&
+        state.collections.map((collection, index) => {
+          const { source, items } = collection;
 
-            if (el) {
-              if (hit.__position >= 0 && hit.__position < hitRefs.length) {
-                hitRefs[position].current = el;
-              }
-            }
-          }}
-          hit={hit}
-          active={activeHit === hit.__position - 1}
-        />
-      )}
-      bannerComponent={() => <Image src="/twitter-card.png" alt="banner" />}
-    />
+          return (
+            <div key={`source-${index}`} className="ais-source">
+              <h3 className="ais-source-id">{source.sourceId}</h3>
+
+              {items.length > 0 && (
+                <ul className="ais-source-list" {...rest.getListProps()}>
+                  {items.map((item) => {
+                    const itemProps = rest.getItemProps({
+                      item,
+                      source,
+                      onClick: (event: KeyboardEvent | MouseEvent) => {
+                        onItemClick(item, event);
+                      },
+                    });
+
+                    return (
+                      <li
+                        key={item.objectID}
+                        className="ais-source-item"
+                        {...itemProps}
+                      >
+                        {source.sourceId === "article" ? <File /> : <Search />}
+                        <span>{item.title}</span>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
+          );
+        })}
+    </div>
   );
 }
 
