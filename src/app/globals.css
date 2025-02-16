@@ -150,8 +150,7 @@
     @apply disabled:cursor-not-allowed disabled:opacity-50;
   }
 
-  .ais-panel { 
-    @apply max-h-[300px] overflow-y-auto overflow-x-hidden;
+  .ais-panel {
     @apply flex flex-col gap-2;
     @apply py-2;
   }
@@ -167,13 +166,33 @@
 
   .ais-source-list {
     @apply flex flex-col gap-1;
+    @apply max-h-[240px] overflow-y-auto overflow-x-hidden;
   }
 
   .ais-source-item {
-    @apply flex items-center gap-1 rounded-md p-2;
+    @apply relative flex items-center gap-1 rounded-md px-2 py-3;
     @apply text-muted-foreground;
     @apply transition-colors duration-200 ease-in-out;
     @apply cursor-pointer;
+  }
+
+  .ais-recent .ais-action {
+    @apply absolute top-1/2 -translate-y-1/2;
+    @apply opacity-0 transition-opacity duration-200 ease-in-out;
+    @apply !bg-transparent !border-transparent !outline-none !shadow-none;
+    @apply cursor-pointer;
+  }
+
+  .ais-recent .ais-action:hover {
+    @apply !bg-sky-300/75 !text-sky-950 dark:!bg-sky-400/50 dark:!text-sky-50;
+  }
+
+  .ais-recent .ais-favorite {
+    @apply right-12;
+  }
+
+  .ais-recent .ais-remove {
+    @apply right-2;
   }
 
   .ais-source-item:hover {
@@ -181,10 +200,15 @@
   }
 
   .ais-source-item[aria-selected="true"] {
-    @apply bg-sky-800 text-sky-50;
+    @apply bg-sky-100 text-sky-950 dark:bg-sky-800 dark:text-sky-50;
   }
 
   .ais-source-item[aria-selected="true"]:hover {
-    @apply bg-sky-600 text-sky-50;
+    @apply bg-sky-200 text-sky-950 dark:bg-sky-600 dark:text-sky-50;
+  }
+
+  .ais-recent
+    .ais-action:is(.ais-source-item[aria-selected="true"]:hover > .ais-action) {
+    @apply opacity-100;
   }
 }

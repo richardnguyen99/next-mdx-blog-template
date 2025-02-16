@@ -6,6 +6,8 @@ import {
 } from "@/types/algolia";
 import useMemoizedAutocomplete from "./use-autocomplete";
 import ScreenResult from "./search-result";
+import ScreenEmpty from "./search-empty";
+import ScreenRecent from "./search-recent";
 
 type Props = ReturnType<typeof useMemoizedAutocomplete> & {
   state: InternalSearchState<InternalSearchHitWithParent>;
@@ -29,19 +31,11 @@ function SearchScreen(props: Props): JSX.Element {
   );
 
   if (!props.state.query) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-sm text-gray-500">Type to search...</p>
-      </div>
-    );
+    return <ScreenRecent hasCollections={hasCollections} {...props} />
   }
 
   if (!hasCollections) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-sm text-gray-500">No results found</p>
-      </div>
-    );
+    return <ScreenEmpty {...props} />;
   }
 
   return <ScreenResult {...props} />
