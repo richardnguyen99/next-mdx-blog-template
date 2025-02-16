@@ -5,10 +5,10 @@ import { BookIcon } from "lucide-react";
 import { Highlight } from "react-instantsearch";
 
 import { cn } from "@/lib/utils";
-import { type AlgoliaAttributes } from "@/types/algolia";
+import { type InternalSearchAlgoliaAttributes } from "@/types/algolia";
 
 type InternalHitProps = Omit<LinkProps, "href"> & {
-  hit: HitProps<AlgoliaAttributes>;
+  hit: HitProps<InternalSearchAlgoliaAttributes>;
   ref?: React.Ref<HTMLAnchorElement>;
   active?: boolean;
 };
@@ -30,12 +30,15 @@ function HitComponent({
       <div className="flex items-center gap-2 mb-2">
         <BookIcon className="w-4 h-4" />
         <h3 className="text-lg font-bold">
-          <Highlight<HitProps<AlgoliaAttributes>> attribute="title" hit={hit} />
+          <Highlight<HitProps<InternalSearchAlgoliaAttributes>>
+            attribute="title"
+            hit={hit}
+          />
         </h3>
       </div>
 
       <p className="text-slate-300 dark:text-slate-500 line-clamp-2">
-        <Highlight<HitProps<AlgoliaAttributes>>
+        <Highlight<HitProps<InternalSearchAlgoliaAttributes>>
           attribute="description"
           hit={hit}
         />

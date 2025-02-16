@@ -2,7 +2,7 @@ import React, { type JSX } from "react";
 import Image from "next/image";
 import { Hits } from "react-instantsearch";
 
-import { type AlgoliaAttributes } from "@/types/algolia";
+import { type InternalSearchAlgoliaAttributes } from "@/types/algolia";
 import { cn } from "@/lib/utils";
 import HitComponent from "./hit";
 
@@ -14,7 +14,7 @@ type Props = {
 
 function SearchResult({ hitRefs, activeHit }: Props): JSX.Element {
   return (
-    <Hits<AlgoliaAttributes>
+    <Hits<InternalSearchAlgoliaAttributes>
       classNames={{
         root: cn("h-full mt-8"),
         list: cn("flex flex-col gap-4 max-h-full overflow-y-auto"),
