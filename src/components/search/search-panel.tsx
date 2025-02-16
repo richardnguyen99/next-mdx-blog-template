@@ -6,12 +6,15 @@ import { getAlgoliaResults } from "@algolia/autocomplete-preset-algolia";
 
 import { client as searchClient } from "@/lib/algolia";
 import {
+  InternalSearchHit,
   InternalSearchHitWithParent,
   InternalSearchState,
+  InternalStoredSearchHit,
 } from "@/types/algolia";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { File, Search } from "lucide-react";
+import { createStoredSearches } from "./create-stored-searches";
 
 type Props = {
   isOpen: boolean;
@@ -20,6 +23,8 @@ type Props = {
 };
 
 function SearchPanel({ onClose }: Props): React.JSX.Element {
+  const indexName = process.env.NEXT_PUBLIC_ALGOLIA_INDEX_NAME as string;
+
   const { push } = useRouter();
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [autocompleteState, setAutocompleteState] = React.useState<
@@ -33,6 +38,36 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
     context: {},
     completion: null,
   });
+
+  const favoriteSearches = React.useRef(
+    createStoredSearches<InternalStoredSearchHit>({
+      key: `__AUTOCOMPLETE_FAVORITE_SEARCHES__${indexName}`,
+      limit: 10,
+    })
+  ).current;
+
+  const recentSearches = React.useRef(
+    createStoredSearches<InternalStoredSearchHit>({
+      key: `__AUTOCOMPLETE_RECENT_SEARCHES__${indexName}`,
+      // We display 7 recent searches and there's no favorites, but only
+      // 4 when there are favorites.
+      limit: favoriteSearches.getAll().length === 0 ? 7 : 4,
+    })
+  ).current;
+
+  const saveRecentSearch = React.useCallback(
+    function saveRecentSearch(item: InternalSearchHit) {
+      if (
+        item &&
+        favoriteSearches
+          .getAll()
+          .findIndex((x) => x.objectID === item.objectID) === -1
+      ) {
+        recentSearches.add(item);
+      }
+    },
+    [favoriteSearches, recentSearches]
+  );
 
   const autocomplete = React.useMemo(
     () =>
@@ -56,12 +91,28 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
         navigator: {
           navigate({ itemUrl }) {
             push(itemUrl);
-            onClose();
           },
         },
         getSources({ query }) {
           if (!query) {
-            return [];
+            return [
+              {
+                sourceId: "recent searches",
+                getItemUrl({ item }) {
+                  return `/blog/${item.objectID}`;
+                },
+                getItems() {
+                  return recentSearches.getAll() as InternalSearchHitWithParent[];
+                },
+                onSelect({ item, event }) {
+                  saveRecentSearch(item);
+
+                  if (!isModifierEvent(event)) {
+                    onClose();
+                  }
+                },
+              },
+            ];
           }
 
           return [
@@ -71,13 +122,19 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
               getItemInputValue({ item }) {
                 return item.query as string;
               },
+              onSelect({ item, event }) {
+                saveRecentSearch(item);
+
+                if (!isModifierEvent(event)) {
+                  onClose();
+                }
+              },
               getItems({ query }) {
                 return getAlgoliaResults({
                   searchClient,
                   queries: [
                     {
-                      indexName: process.env
-                        .NEXT_PUBLIC_ALGOLIA_INDEX_NAME as string,
+                      indexName: indexName,
                       params: {
                         query,
                         hitsPerPage: 4,
@@ -105,7 +162,7 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
           ];
         },
       }),
-    [onClose, push]
+    [indexName, onClose, push, recentSearches, saveRecentSearch]
   );
 
   return (
@@ -163,9 +220,7 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
                             className="ais-source-item"
                             {...itemProps}
                           >
-                            {source.sourceId === "article" && (
-                              <File />
-                            )}
+                            {source.sourceId === "article" ? <File /> : <Search />}
                             <span>{item.title}</span>
                           </li>
                         );
@@ -182,3 +237,21 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
 }
 
 export default SearchPanel;
+
+/**
+ * Detect when an event is modified with a special key to let the browser
+ * trigger its default behavior.
+ */
+export function isModifierEvent<TEvent extends KeyboardEvent | MouseEvent>(
+  event: TEvent
+): boolean {
+  const isMiddleClick = (event as MouseEvent).button === 1;
+
+  return (
+    isMiddleClick ||
+    event.altKey ||
+    event.ctrlKey ||
+    event.metaKey ||
+    event.shiftKey
+  );
+}

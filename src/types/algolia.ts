@@ -31,7 +31,7 @@ interface InternalSearchHitHighlightResult {
   description: InternalSearchHitAttributeHighlightResult;
   headings: Array<InternalSearchHitAttributeHighlightResult>;
   tags: Array<InternalSearchHitAttributeHighlightResult>;
-  title: InternalSearchHitAttributeHighlightResult
+  title: InternalSearchHitAttributeHighlightResult;
 }
 
 interface InternalSearchHitAttributeSnippetResult {
@@ -40,7 +40,7 @@ interface InternalSearchHitAttributeSnippetResult {
 }
 
 interface InternalSearchHitSnippetResult {
-  description: InternalSearchHitAttributeSnippetResult
+  description: InternalSearchHitAttributeSnippetResult;
   headings: Array<InternalSearchHitAttributeSnippetResult>;
 }
 
@@ -74,6 +74,11 @@ export declare type InternalSearchHit = InternalSearchAlgoliaAttributes & {
   };
   __autocomplete_id?: number;
 };
+
+export type InternalStoredSearchHit = Omit<
+  InternalSearchHit,
+  "_highlightResult" | "_snippetResult"
+>;
 
 export type InternalSearchHitWithParent = InternalSearchHit & {
   __parent: InternalSearchHitWithParent | null;
