@@ -59,7 +59,6 @@ function SearchItem(props: Props): JSX.Element {
         "ais-source-item--deleting": isDeleting,
         "ais-source-item--favoriting": isFavoriting,
       })}
-        
       {...itemProps}
       onTransitionEnd={() => {
         if (action.current) {

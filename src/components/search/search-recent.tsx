@@ -1,5 +1,6 @@
 import React, { type JSX } from "react";
 import { History, Star, X } from "lucide-react";
+import { StarFillIcon } from "@primer/octicons-react";
 
 import useMemoizedAutocomplete from "./use-autocomplete";
 import {
@@ -10,7 +11,6 @@ import {
 import { Button } from "@/components/ui/button";
 import SearchItem from "./search-item";
 import { StoredSearchPlugin } from "./create-stored-searches";
-import { StarFillIcon } from "@primer/octicons-react";
 
 type Props = ReturnType<typeof useMemoizedAutocomplete> & {
   state: InternalSearchState<InternalSearchHitWithParent>;
