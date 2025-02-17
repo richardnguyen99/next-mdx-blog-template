@@ -221,4 +221,41 @@
     .ais-action:is(.ais-source-item[aria-selected="true"]:hover > .ais-action) {
     @apply opacity-100;
   }
+
+  .ais-footer {
+    @apply flex items-center justify-between px-4 py-2;
+    @apply border-t border-border;
+  }
+
+  .ais-logo {
+    @apply flex items-center gap-2;
+    @apply order-2;
+    @apply text-xs text-muted-foreground;
+  }
+
+  .ais-logo-image {
+    @apply invert-100 dark:invert-0;
+  }
+
+  .ais-commands {
+    @apply flex items-center gap-3;
+    @apply order-1;
+  }
+
+  .ais-command {
+    @apply flex items-center gap-1;
+    @apply rounded-md;
+    @apply text-sm text-muted-foreground;
+  }
+
+  .ais-kbd {
+    @apply flex items-center justify-center;
+    @apply rounded-md bg-muted px-1 py-1 text-xs font-medium text-muted-foreground;
+    @apply shadow-sm;
+    @apply border border-border;
+  }
+
+  .ais-kbd > svg {
+    @apply h-3 w-3;
+  }
 }

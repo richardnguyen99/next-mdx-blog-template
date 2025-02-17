@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils";
 import { createStoredSearches } from "./create-stored-searches";
 import useMemoizedAutocomplete, { isModifierEvent } from "./use-autocomplete";
 import SearchScreen from "./search-screen";
+import SearchFooter from "./search-footer";
 
 type Props = {
   isOpen: boolean;
@@ -120,6 +121,8 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
             }
           }}
         />
+
+        <SearchFooter />
       </div>
     </div>
   );
