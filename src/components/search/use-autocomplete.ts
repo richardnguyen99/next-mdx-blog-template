@@ -38,8 +38,9 @@ function useMemoizedAutocomplete(
   indexName: string,
   onClose: () => void,
   recentSearches: StoredSearchPlugin<InternalStoredSearchHit>,
+  favoriteSearches: StoredSearchPlugin<InternalStoredSearchHit>,
   saveRecentSearch: (item: InternalSearchHit) => void,
-  push: ReturnType<typeof useRouter>["push"],
+  push: ReturnType<typeof useRouter>["push"]
 ) {
   const autocomplete = useMemo(
     () =>
@@ -75,6 +76,22 @@ function useMemoizedAutocomplete(
                 },
                 getItems() {
                   return recentSearches.getAll() as InternalSearchHitWithParent[];
+                },
+                onSelect({ item, event }) {
+                  saveRecentSearch(item);
+
+                  if (!isModifierEvent(event)) {
+                    onClose();
+                  }
+                },
+              },
+              {
+                sourceId: "favorite searches",
+                getItemUrl({ item }) {
+                  return `/blog/${item.objectID}`;
+                },
+                getItems() {
+                  return favoriteSearches.getAll() as InternalSearchHitWithParent[];
                 },
                 onSelect({ item, event }) {
                   saveRecentSearch(item);
@@ -134,7 +151,15 @@ function useMemoizedAutocomplete(
           ];
         },
       }),
-    [indexName, onClose, push, recentSearches, saveRecentSearch, setAutocompleteState]
+    [
+      indexName,
+      onClose,
+      push,
+      recentSearches,
+      saveRecentSearch,
+      setAutocompleteState,
+      favoriteSearches,
+    ]
   );
 
   return autocomplete;

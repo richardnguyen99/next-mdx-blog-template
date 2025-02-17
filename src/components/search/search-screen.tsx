@@ -13,7 +13,8 @@ import { StoredSearchPlugin } from "./create-stored-searches";
 
 type Props = ReturnType<typeof useMemoizedAutocomplete> & {
   state: InternalSearchState<InternalSearchHitWithParent>;
-  recentSearches: StoredSearchPlugin<InternalStoredSearchHit>
+  recentSearches: StoredSearchPlugin<InternalStoredSearchHit>;
+  favoriteSearches: StoredSearchPlugin<InternalStoredSearchHit>;
   onItemClick: (
     item: InternalSearchHitWithParent,
     event: MouseEvent | KeyboardEvent
@@ -34,14 +35,14 @@ function SearchScreen(props: Props): JSX.Element {
   );
 
   if (!props.state.query) {
-    return <ScreenRecent hasCollections={hasCollections} {...props} />
+    return <ScreenRecent hasCollections={hasCollections} {...props} />;
   }
 
   if (!hasCollections) {
     return <ScreenEmpty {...props} />;
   }
 
-  return <ScreenResult {...props} />
+  return <ScreenResult {...props} />;
 }
 
 export default React.memo(

@@ -171,12 +171,18 @@
 
   .ais-source-item {
     @apply relative flex items-center gap-1 rounded-md px-2 py-3;
-    @apply text-muted-foreground;
-    @apply transition-[background-color,opacity] duration-200 ease-in-out;
+    @apply text-muted-foreground opacity-100;
+    @apply transition-[background-color,opacity,transform] duration-200 ease-in-out;
     @apply cursor-pointer;
+    @apply transform-[scale(1)];
   }
 
   .ais-source-item--deleting {
+    @apply opacity-0;
+  }
+
+  .ais-source-item--favoriting {
+    @apply transform-[scale(0.9)];
     @apply opacity-0;
   }
 

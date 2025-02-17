@@ -76,8 +76,9 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
     indexName,
     onClose,
     recentSearches,
+    favoriteSearches,
     saveRecentSearch,
-    push
+    push,
   );
 
   return (
@@ -109,6 +110,7 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
           {...autocomplete}
           state={autocompleteState}
           recentSearches={recentSearches}
+          favoriteSearches={favoriteSearches}
           onItemClick={(item, evt) => {
             saveRecentSearch(item);
             push(`/blog/${item.objectID}`);

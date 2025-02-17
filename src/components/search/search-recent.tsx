@@ -10,10 +10,12 @@ import {
 import { Button } from "@/components/ui/button";
 import SearchItem from "./search-item";
 import { StoredSearchPlugin } from "./create-stored-searches";
+import { StarFillIcon } from "@primer/octicons-react";
 
 type Props = ReturnType<typeof useMemoizedAutocomplete> & {
   state: InternalSearchState<InternalSearchHitWithParent>;
-  recentSearches: StoredSearchPlugin<InternalStoredSearchHit>
+  recentSearches: StoredSearchPlugin<InternalStoredSearchHit>;
+  favoriteSearches: StoredSearchPlugin<InternalStoredSearchHit>;
   onItemClick: (
     item: InternalSearchHitWithParent,
     event: MouseEvent | KeyboardEvent
@@ -38,12 +40,15 @@ function SearchRecent({
     return null;
   }
 
-  
   return (
     <div className="ais-panel ais-recent" {...rest.getPanelProps({})}>
       {state.isOpen &&
         state.collections.map((collection, index) => {
           const { source, items } = collection;
+
+          if (items.length === 0) {
+            return null;
+          }
 
           return (
             <div key={`source-${index}`} className="ais-source">
@@ -52,9 +57,8 @@ function SearchRecent({
               {items.length > 0 && (
                 <ul className="ais-source-list" {...rest.getListProps()}>
                   {items.map((item) => {
-
                     return (
-                      <SearchItem 
+                      <SearchItem
                         key={item.objectID}
                         item={item}
                         index={index}
@@ -64,44 +68,72 @@ function SearchRecent({
                         renderIcon={() => (
                           <History className="w-4 h-4 text-gray-500" />
                         )}
-                        renderAction={({ deleteTransitionCallback, favoriteTransitionCallback }) => (
+                        renderAction={({
+                          deleteTransitionCallback,
+                          favoriteTransitionCallback,
+                        }) => (
                           <React.Fragment>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="ais-action ais-favorite"
-                            onClick={(event) => {
-                              event.preventDefault();
-                              event.stopPropagation();
+                            {source.sourceId === "favorite searches" ? (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="ais-action ais-favorite"
+                                title="Unfavorite"
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  event.stopPropagation();
 
-                              favoriteTransitionCallback(() => {
-                                console.log("Favorite action triggered");
-                              });
-                            }}
-                          >
-                            <Star />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="ais-action ais-remove"
-                            onClick={(event) => {
-                              event.preventDefault();
-                              event.stopPropagation();
+                                  favoriteTransitionCallback(() => {
+                                    rest.favoriteSearches.remove(item);
+                                    rest.recentSearches.add(item);
+                                    rest.refresh();
+                                  });
+                                }}
+                              >
+                                <StarFillIcon />
+                              </Button>
+                            ): (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="ais-action ais-favorite"
+                                title="Favorite"
+                                onClick={(event) => {
+                                  event.preventDefault();
+                                  event.stopPropagation();
 
-                              deleteTransitionCallback(() => {
-                                rest.recentSearches.remove(item);
-                                rest.refresh();
-                              });
-                            }}
-                          >
-                            <X />
-                          </Button>
+                                  favoriteTransitionCallback(() => {
+                                    rest.favoriteSearches.add(item);
+                                    rest.recentSearches.remove(item);
+                                    rest.refresh();
+                                  });
+                                }}
+                              >
+                                <Star />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="ais-action ais-remove"
+                              title={`Remove from ${source.sourceId}`}
+                              onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+
+                                deleteTransitionCallback(() => {
+                                  rest.recentSearches.remove(item);
+                                  rest.refresh();
+                                });
+                              }}
+                            >
+                              <X />
+                            </Button>
                           </React.Fragment>
                         )}
                         {...rest}
                       />
-                    )
+                    );
                   })}
                 </ul>
               )}
