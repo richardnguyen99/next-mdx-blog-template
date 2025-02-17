@@ -54,6 +54,8 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
     })
   ).current;
 
+
+
   const saveRecentSearch = React.useCallback(
     function saveRecentSearch(item: InternalSearchHit) {
       if (
@@ -106,6 +108,7 @@ function SearchPanel({ onClose }: Props): React.JSX.Element {
         <SearchScreen
           {...autocomplete}
           state={autocompleteState}
+          recentSearches={recentSearches}
           onItemClick={(item, evt) => {
             saveRecentSearch(item);
             push(`/blog/${item.objectID}`);

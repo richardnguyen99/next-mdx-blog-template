@@ -172,8 +172,12 @@
   .ais-source-item {
     @apply relative flex items-center gap-1 rounded-md px-2 py-3;
     @apply text-muted-foreground;
-    @apply transition-colors duration-200 ease-in-out;
+    @apply transition-[background-color,opacity] duration-200 ease-in-out;
     @apply cursor-pointer;
+  }
+
+  .ais-source-item--deleting {
+    @apply opacity-0;
   }
 
   .ais-recent .ais-action {

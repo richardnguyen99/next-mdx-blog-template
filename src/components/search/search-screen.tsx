@@ -3,14 +3,17 @@ import React, { type JSX } from "react";
 import {
   InternalSearchHitWithParent,
   InternalSearchState,
+  InternalStoredSearchHit,
 } from "@/types/algolia";
 import useMemoizedAutocomplete from "./use-autocomplete";
 import ScreenResult from "./search-result";
 import ScreenEmpty from "./search-empty";
 import ScreenRecent from "./search-recent";
+import { StoredSearchPlugin } from "./create-stored-searches";
 
 type Props = ReturnType<typeof useMemoizedAutocomplete> & {
   state: InternalSearchState<InternalSearchHitWithParent>;
+  recentSearches: StoredSearchPlugin<InternalStoredSearchHit>
   onItemClick: (
     item: InternalSearchHitWithParent,
     event: MouseEvent | KeyboardEvent
