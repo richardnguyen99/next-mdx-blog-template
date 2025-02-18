@@ -122,7 +122,12 @@ function SearchRecent({
                                 event.stopPropagation();
 
                                 deleteTransitionCallback(() => {
-                                  rest.recentSearches.remove(item);
+                                  if (source.sourceId === "favorite searches") {
+                                    rest.favoriteSearches.remove(item);
+                                  } else {
+                                    rest.recentSearches.remove(item);
+                                  }
+
                                   rest.refresh();
                                 });
                               }}

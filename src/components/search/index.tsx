@@ -2,6 +2,8 @@
 
 import React from "react";
 import { SearchIcon } from "lucide-react";
+import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
+import { InstantSearchNext } from "react-instantsearch-nextjs";
 
 import { useSearchKeyboardEvents } from "@/hooks/use-search-keyboard-events";
 import {
@@ -14,8 +16,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
-import { InstantSearchNext } from "react-instantsearch-nextjs";
 import { client as algoliaClient } from "@/lib/algolia";
 import SearchPanel from "./search-panel";
 
@@ -34,7 +34,7 @@ function Search(): React.JSX.Element {
   useSearchKeyboardEvents({
     isOpen: open,
     onOpen: handleOpen,
-    onClose: handleClose, 
+    onClose: handleClose,
     searchButtonRef,
   });
 

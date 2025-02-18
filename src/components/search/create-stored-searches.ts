@@ -1,10 +1,13 @@
-import type { InternalSearchHit, InternalStoredSearchHit } from "@/types/algolia"
+import type {
+  InternalSearchHit,
+  InternalStoredSearchHit,
+} from "@/types/algolia";
 
 function isLocalStorageSupported(): boolean {
-  const key = '__TEST_KEY__';
+  const key = "__TEST_KEY__";
 
   try {
-    localStorage.setItem(key, '');
+    localStorage.setItem(key, "");
     localStorage.removeItem(key);
 
     return true;
@@ -56,9 +59,12 @@ export function createStoredSearches<TItem extends InternalStoredSearchHit>({
   return {
     add(item: TItem): void {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { _highlightResult, _snippetResult, ...hit } = item as unknown as InternalSearchHit;
+      const { _highlightResult, _snippetResult, ...hit } =
+        item as unknown as InternalSearchHit;
 
-      const isQueryAlreadySaved = items.findIndex((x) => x.objectID === hit.objectID);
+      const isQueryAlreadySaved = items.findIndex(
+        (x) => x.objectID === hit.objectID
+      );
 
       if (isQueryAlreadySaved > -1) {
         items.splice(isQueryAlreadySaved, 1);
