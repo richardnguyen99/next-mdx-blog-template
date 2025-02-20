@@ -14,7 +14,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { client as algoliaClient } from "@/lib/algolia";
 import SearchPanel from "./search-panel";
@@ -43,11 +43,13 @@ function Search(): React.JSX.Element {
       <DialogTrigger asChild>
         <Button
           ref={searchButtonRef}
+          variant="outline"
           className={cn(
-            buttonVariants({
-              variant: "outline",
-            }),
-            "dark:bg-slate-800 dark:hover:bg-sky-900 dark:text-slate-200 dark:border-slate-700 dark:hover:border-sky-800 dark:hover:text-slate-50"
+            "cursor-pointer",
+            "dark:bg-slate-800 dark:hover:bg-sky-900",
+            "dark:text-slate-200 dark:hover:text-slate-50",
+            "dark:border-slate-700 dark:hover:border-sky-800",
+            "bg-slate-100 hover:bg-slate-200"
           )}
         >
           <SearchIcon className="w-4 h-4 mr-1" />
@@ -55,7 +57,13 @@ function Search(): React.JSX.Element {
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="block h-full bg-transparent border-transparent w-full max-h-full max-w-3xl [&>button]:block md:[&>button]:hidden">
+      <DialogContent
+        className={cn(
+          "block h-full w-full max-h-full max-w-3xl",
+          "bg-transparent border-transparent",
+          "[&>button]:block md:[&>button]:hidden"
+        )}
+      >
         <VisuallyHidden>
           <DialogHeader>
             <DialogTitle>Search</DialogTitle>

@@ -42,7 +42,7 @@ function ThemeSwitcher(): JSX.Element {
 
   if (!mounted) {
     return (
-      <div className="w-9 h-9 rounded-full animate-pulse dark:bg-slate-800" />
+      <div className="w-9 h-9 rounded-md animate-pulse dark:bg-slate-800" />
     );
   }
 
