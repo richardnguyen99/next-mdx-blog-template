@@ -1,10 +1,11 @@
 import React from "react";
 import Link, { LinkProps } from "next/link";
-import { RssIcon, LinkExternalIcon, MoonIcon } from "@primer/octicons-react";
+import { RssIcon, LinkExternalIcon } from "@primer/octicons-react";
 
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 import AlgoliaSearch from "./search";
+import ThemeSwitcher from "@/app/components/theme-switcher";
 
 const IconLink: React.FC<
   React.PropsWithChildren<React.AnchorHTMLAttributes<HTMLAnchorElement>>
@@ -56,15 +57,8 @@ const Header: React.FC = () => (
         <IconLink href="#">
           <LinkExternalIcon />
         </IconLink>
-        <button
-          className={cn(
-            buttonVariants({ variant: "ghost", size: "icon" }),
-            "text-slate-200",
-            "dark:hover:bg-sky-900"
-          )}
-        >
-          <MoonIcon />
-        </button>
+
+        <ThemeSwitcher />
       </div>
     </nav>
   </div>
