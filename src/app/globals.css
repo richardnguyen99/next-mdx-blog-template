@@ -258,4 +258,37 @@
   .ais-kbd > svg {
     @apply h-3 w-3;
   }
+
+  .prose > h1[id],
+  .prose > h2[id],
+  .prose > h3[id] {
+    @apply flex items-center gap-2;
+  }
+
+  .prose > h1[id] > .anchor,
+  .prose > h2[id] > .anchor,
+  .prose > h3[id] > .anchor {
+    @apply opacity-0;
+    @apply transition-opacity duration-200 ease-in-out;
+    @apply !no-underline;
+  }
+
+  .prose > h1:hover[id] > .anchor,
+  .prose > h2:hover[id] > .anchor,
+  .prose > h3:hover[id] > .anchor {
+    @apply opacity-100;
+    @apply transition-opacity duration-200 ease-in-out;
+  }
+
+  .prose > h1[id] > .anchor {
+    @apply !text-sky-500 dark:!text-sky-400;
+  }
+
+  .prose > h2[id] > .anchor {
+    @apply !text-lime-500 dark:!text-lime-400;
+  }
+
+  .prose > h3[id] > .anchor {
+    @apply !text-rose-500 dark:!text-rose-400;
+  }
 }

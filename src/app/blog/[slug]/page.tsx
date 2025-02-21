@@ -7,6 +7,7 @@ import { Params, SlugPostProps } from "./layout";
 import shortCodes from "./short-codes";
 import ImageCard from "@/components/image-card";
 import { cn } from "@/lib/utils";
+import rehypePlugins from "./rehype-plugins";
 
 // Force NextJS to return 404 for unknown slugs
 export const dynamicParams = false;
@@ -18,9 +19,7 @@ export async function generateStaticParams(): Promise<Params[]> {
   return slugs.map((slug) => ({ slug }));
 }
 
-async function BlogPost({
-  params,
-}: SlugPostProps): Promise<JSX.Element> {
+async function BlogPost({ params }: SlugPostProps): Promise<JSX.Element> {
   const { slug } = await params;
   const { frontmatter, rawContent, fields } = await getMdxFromSlug(slug);
 
@@ -87,7 +86,17 @@ async function BlogPost({
       </div>
 
       <div className="prose prose-slate lg:prose-lg dark:prose-invert pt-12">
-        <MDXRemote components={shortCodes} source={rawContent} />
+        <MDXRemote
+          components={shortCodes}
+          source={rawContent}
+          options={{
+            mdxOptions: {
+              rehypePlugins,
+              remarkRehypeOptions: {},
+              remarkPlugins: [],
+            },
+          }}
+        />
       </div>
 
       <hr className="w-full border-t dark:border-slate-800 my-8" />
