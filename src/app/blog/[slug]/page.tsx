@@ -1,10 +1,12 @@
-import React from "react";
+import React, { type JSX } from "react";
 import { MDXRemote } from "next-mdx-remote/rsc";
 import { type WithContext, type TechArticle } from "schema-dts";
 
 import { getAllSlugs, getMdxFromSlug } from "@/lib/mdx";
 import { Params, SlugPostProps } from "./layout";
 import shortCodes from "./short-codes";
+import ImageCard from "@/components/image-card";
+import { cn } from "@/lib/utils";
 
 // Force NextJS to return 404 for unknown slugs
 export const dynamicParams = false;
@@ -16,7 +18,9 @@ export async function generateStaticParams(): Promise<Params[]> {
   return slugs.map((slug) => ({ slug }));
 }
 
-export default async function BlogPost({ params }: SlugPostProps) {
+async function BlogPost({
+  params,
+}: SlugPostProps): Promise<JSX.Element> {
   const { slug } = await params;
   const { frontmatter, rawContent, fields } = await getMdxFromSlug(slug);
 
@@ -41,14 +45,45 @@ export default async function BlogPost({ params }: SlugPostProps) {
       />
 
       <div className="w-full text-center">
-        <h1 className="text-black dark:text-white text-2xl font-bold lg:text-5xl lg:font-black">
+        <h1
+          className={cn(
+            "text-black dark:text-white",
+            "text-2xl font-bold lg:text-5xl lg:font-black"
+          )}
+        >
           {frontmatter.title}
         </h1>
 
-        <div className="flex items-center justify-between w-full mt-4 mb-4 pb-4 text-sm text-gray-500 border-b dark:border-slate-800 border-b-gray-200">
+        <div
+          className={cn(
+            "flex items-center justify-between",
+            "w-full mt-4 mb-8 pb-4 text-sm",
+            "text-gray-700 dark:text-gray-400",
+            "border-b dark:border-slate-800 border-b-gray-200"
+          )}
+        >
           <div>{fields.timeToRead.text}</div>
           <div>{frontmatter.date}</div>
         </div>
+      </div>
+
+      <div className="w-full mb-8">
+        <figure>
+          <ImageCard
+            src={frontmatter.thumbnail}
+            alt={frontmatter.thumbnail_alt}
+            width={768}
+            className="w-full h-96 object-cover rounded-lg"
+          />
+          <figcaption
+            className={cn(
+              "text-center mt-4 text-sm",
+              "text-gray-500 dark:text-gray-400"
+            )}
+          >
+            {frontmatter.thumbnail_alt}. By {frontmatter.author}.
+          </figcaption>
+        </figure>
       </div>
 
       <div className="prose prose-slate lg:prose-lg dark:prose-invert pt-12">
@@ -63,3 +98,5 @@ export default async function BlogPost({ params }: SlugPostProps) {
     </React.Fragment>
   );
 }
+
+export default BlogPost;
