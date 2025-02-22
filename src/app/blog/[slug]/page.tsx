@@ -8,6 +8,7 @@ import shortCodes from "./short-codes";
 import ImageCard from "@/components/image-card";
 import { cn } from "@/lib/utils";
 import rehypePlugins from "./rehype-plugins";
+import remarkPlugins from "./remark-plugins";
 
 // Force NextJS to return 404 for unknown slugs
 export const dynamicParams = false;
@@ -93,7 +94,7 @@ async function BlogPost({ params }: SlugPostProps): Promise<JSX.Element> {
             mdxOptions: {
               rehypePlugins,
               remarkRehypeOptions: {},
-              remarkPlugins: [],
+              remarkPlugins,
             },
           }}
         />
