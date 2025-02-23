@@ -1,9 +1,13 @@
 import { type MDXRemoteProps } from "next-mdx-remote/rsc";
 import rehypeSlug, { type Options as RehypeSlugOptions } from "rehype-slug";
-import rehypeKatex, {type Options as RehypeKatexOptions } from "rehype-katex";
+import rehypeKatex, { type Options as RehypeKatexOptions } from "rehype-katex";
+import rehypePrettyCode, {
+  type Options as RehypePrettyCodeOptions,
+} from "rehype-pretty-code";
 import rehypeAutolinkHeadings, {
   type Options as RehypeAutolinkOptions,
 } from "rehype-autolink-headings";
+import { getSingletonHighlighter, type BundledHighlighterOptions } from "shiki";
 
 const rehypePlugins = [
   // Generate slug id for headings
@@ -43,6 +47,24 @@ const rehypePlugins = [
     {
       strict: true,
     } satisfies RehypeKatexOptions,
+  ],
+
+  [
+    rehypePrettyCode,
+    {
+      theme: {
+        dark: "github-dark-default",
+        light: "github-light-default",
+      },
+      keepBackground: true,
+      getHighlighter: async (
+        options: BundledHighlighterOptions<string, string>
+      ) =>
+        await getSingletonHighlighter({
+          ...options,
+          langs: [...options.langs, "make", "makefile", "cmake"],
+        }),
+    } satisfies RehypePrettyCodeOptions,
   ],
 ] satisfies NonNullable<
   NonNullable<MDXRemoteProps["options"]>["mdxOptions"]

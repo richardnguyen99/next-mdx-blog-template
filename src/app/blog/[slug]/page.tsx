@@ -88,9 +88,17 @@ async function BlogPost({ params }: SlugPostProps): Promise<JSX.Element> {
 
       <div
         className={cn(
+          // general prose styling
           "prose prose-slate lg:prose-lg dark:prose-invert pt-12",
+
+          // tables
           "prose-th:py-4 prose-th:text-accent-foreground prose-th:font-bold",
-          "prose-headings:scroll-smooth prose-headings:scroll-mt-16"
+
+          // headings
+          "prose-headings:scroll-smooth prose-headings:scroll-mt-16",
+
+          // pre code blocks
+          "prose-pre:bg-[var(--shiki-light-bg)] dark:prose-pre:bg-[var(--shiki-dark-bg)]"
         )}
       >
         <MDXRemote
@@ -98,6 +106,7 @@ async function BlogPost({ params }: SlugPostProps): Promise<JSX.Element> {
           source={rawContent}
           options={{
             mdxOptions: {
+              useDynamicImport: true,
               rehypePlugins,
               remarkRehypeOptions: {},
               remarkPlugins,

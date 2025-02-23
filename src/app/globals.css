@@ -291,6 +291,12 @@
   .prose > h3[id] > .anchor {
     @apply !text-rose-500 dark:!text-rose-400;
   }
+
+  .prose code[data-theme],
+  .prose code[data-theme] span {
+    @apply text-[var(--shiki-light)] bg-[var(--shiki-light-bg)];
+    @apply dark:text-[var(--shiki-dark)] dark:bg-[var(--shiki-dark-bg)];
+  }
 }
 
 @layer base {
