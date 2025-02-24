@@ -1,0 +1,304 @@
+---
+title: "Linked list versus Vector"
+slug: "linked-list-vs-vector"
+date: "2024-03-10"
+author: "Jonathan Sidwell"
+description: "A comparison of linked lists and vectors in C++."
+tags: ["c++", "programming", "development"]
+category: "programming"
+thumbnail: "linked-list-vs-vector_qmhyyjeqr8kjbhjghjbs"
+thumbnail_alt: "Linked list versus Vector Thumbnail"
+published: true 
+publishedAt: "2024-03-10"
+---
+
+<Callout variant="warning" heading="Disclaimer" collapsible>
+
+This article is written using generative chatbot. The content may not be 
+accurate, nor does it represent the views of the author. Please use caution 
+when reading this article.
+
+</Callout>
+
+# What is Linked List?
+
+A linked list is a data structure that consists of a sequence of elements, where
+each element points to the next element in the sequence. Each element in a 
+linked list is called a node and contains two parts: **the data* and *a 
+reference* (or pointer) to the next node in the sequence. The last node in the 
+list points to a null reference, indicating the end of the list.[^1]
+
+```cpp
+template <typename T>
+struct Node {
+    T data;
+    Node* next;
+};
+
+template <typename T>
+class LinkedList {
+private:
+    Node<T>* head;
+    Node<T>* tail;
+    size_t size;
+}
+```
+
+# What is Vector?
+
+A vector is a dynamic array that can grow or shrink in size. It is a
+sequence container that provides constant time access to its elements. Vectors
+store elements in contiguous memory locations, allowing for efficient access to
+elements by index.[^2]
+
+```cpp
+template <typename T>
+class vector {
+private:
+    T* data;
+    size_t size;
+    size_t capacity;
+};
+```
+
+# Linked List vs. Vector
+
+Both data structures are mainly used to store data without a fixed size. 
+However, they have different characteristics that make them suitable for
+different use cases. Here are some key differences between linked lists and
+vectors
+
+## Memory Allocation
+
+Memory allocation is a process of allocating heap memory to store data. Since
+they are dynamic data structures, both linked lists and vectors require dynamic
+memory allocation to store dadta. However, they use different memory allocation
+strategies.
+
+### Linked List 
+
+Linked lists allocate memory for each node separately, which can lead to
+fragmentation and increased memory overhead. Vectors allocate memory
+contiguously, which reduces memory overhead and improves cache performance.
+
+```cpp
+template <typename T>
+class LinkedList {
+public:
+    LinkedList() : head(nullptr), tail(nullptr), size(0) {}
+
+private:
+    void __allocate_node(T data) {
+        Node<T>* new_node = new Node<T>;
+
+        if (nodde == nullptr) {
+            throw std::bad_alloc();
+        }
+
+        new_node->data = data;
+        new_node->next = nullptr;
+    }
+};
+```
+
+### Vector
+
+Vectors allocate memory contiguously, which allows for efficient access to
+elements by index. Vectors also provide constant time access to elements, which
+makes them suitable for random access operations.
+
+```cpp
+template <typename T>
+class vector {
+public:
+    vector() : data(nullptr), size(0), capacity(0) {}
+
+private:
+    void __allocate_data(size_t new_capacity) {
+        T* new_data = new T[new_capacity];
+
+        if (new_data == nullptr) {
+            throw std::bad_alloc();
+        }
+
+        std::copy(data, data + size, new_data);
+        delete[] data;
+        data = new_data;
+        capacity = new_capacity;
+    }
+};
+```
+
+## Access Time
+
+Data access is a crucial factor when choosing a data structure. Linked lists and
+vectors have different access times due to their memory allocation strategies.
+
+### Linked List
+
+Linked lists provide constant time access to elements by index. However, they
+require traversing the list from the beginning to access an element, which can
+lead to slower access times for large lists.
+
+```cpp
+template <typename T>
+class LinkedList {
+public:
+    T& operator[](size_t index) {
+        if (index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        Node<T>* current = head;
+        for (size_t i = 0; i < index; i++) {
+            current = current->next;
+        }
+
+        return current->data;
+    }
+};
+```
+
+### Vector
+
+Vectors provide constant time access to elements by index, as they store
+elements in contiguous memory locations. This allows for efficient access to
+elements without the need to traverse the entire list.
+
+```cpp
+template <typename T>
+class vector {
+public:
+    T& operator[](size_t index) {
+        if (index >= size) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        return data[index];
+    }
+};
+```
+
+## Insertion and Deletion
+
+Insertion and deletion operations are essential when working with dynamic data
+structures. Linked lists and vectors have different characteristics when it
+comes to insertion and deletion operations.
+
+### Linked List 
+
+Linked lists provide constant time insertion and deletion operations at the
+beginning and end of the list. However, inserting or deleting elements in the
+middle of the list requires traversing the list, which can lead to slower
+performance for large lists.
+
+```cpp
+template <typename T>
+class LinkedList {
+public:
+    void push_front(T data) {
+        Node<T>* new_node = __allocate_node(data);
+
+        if (head == nullptr) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            new_node->next = head;
+            head = new_node;
+        }
+
+        size++;
+    }
+
+    void push_back(T data) {
+        Node<T>* new_node = __allocate_node(data);
+
+        if (tail == nullptr) {
+            head = new_node;
+            tail = new_node;
+        } else {
+            tail->next = new_node;
+            tail = new_node;
+        }
+
+        size++;
+    }
+};
+```
+
+### Vector
+
+Vectors provide constant time insertion and deletion operations at the end of
+the vector. However, inserting or deleting elements in the middle of the vector
+requires shifting elements, which can lead to slower performance for large
+vectors.
+
+```cpp
+template <typename T>
+class vector {
+public:
+    void insert(size_t index, T value) {
+        if (index > size) {
+            throw std::out_of_range("Index out of range");
+        }
+
+        if (size == capacity) {
+            __allocate_data(capacity * 2);
+        }
+
+        std::copy_backward(data + index, data + size, data + size + 1);
+        data[index] = value;
+        size++;
+    }
+
+    void push_back(T value) {
+        if (size == capacity) {
+            __allocate_data(capacity * 2);
+        }
+
+        data[size++] = value;
+    }
+};
+```
+
+## Memory Overhead
+
+Both linked lists and vectors have different memory overheads due to their
+memory allocation strategies. Linked lists have higher memory overhead due to
+the need to allocate memory for each node separately and store references to
+the next node. Vectors have lower memory overhead due to contiguous memory
+allocation and efficient access to elements by index.
+
+## Cache
+
+Cache performance is an essential factor when choosing a data structure. Linked
+list and vectors have different cache performance characteristics due to their
+memory allocation strategies. Vectors provide better cache performance due to
+contiguous memory allocation, which allows for efficient access to elements by
+index. Linked lists have poorer cache performance due to fragmented memory
+allocation and the need to traverse the list to access elements.
+
+# Conclusion
+
+In conclusion, linked lists and vectors are dynamic data structures that provide
+constant time access to elements. However, they have different characteristics
+that make them suitable for different use cases. Linked lists are suitable for
+insertion and deletion operations at the beginning and end of the list, while
+vectors are suitable for random access operations and efficient cache
+performance. When choosing between linked lists and vectors, consider the
+specific requirements of your application and the trade-offs between memory
+overhead, access time, and cache performance.
+
+| Feature                       | Linked List | Vector     |
+|-------------------------------|-------------|------------|
+| Memory Allocation             | Fragmented  | Contiguous |
+| Access Time                   | $O(n)$      | $O(1)$     |
+| Insertion/Deletion at the end | $O(1)$      | $O(n)$     |
+| Memory Overhead               | High        | Low        |
+| Cache Performance             | Poor        | Good       |
+
+
+# References
+
+[^1]: [Linked List - Wikipedia](https://en.wikipedia.org/wiki/Linked_list)
+[^2]: [Vector - C++ Reference](https://en.cppreference.com/w/cpp/container/vector)
