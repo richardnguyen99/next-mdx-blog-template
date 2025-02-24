@@ -5,7 +5,7 @@ import { RssIcon, LinkExternalIcon } from "@primer/octicons-react";
 import { cn } from "@/lib/utils";
 import { buttonVariants } from "./ui/button";
 import AlgoliaSearch from "./search";
-import ThemeSwitcher from "@/app/components/theme-switcher";
+import ThemeSwitcher from "@/components/theme-switcher";
 
 const IconLink: React.FC<
   React.PropsWithChildren<React.AnchorHTMLAttributes<HTMLAnchorElement>>
